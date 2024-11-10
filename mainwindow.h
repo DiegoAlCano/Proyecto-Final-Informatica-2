@@ -1,7 +1,12 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "Heroe.h"
+#include "Consumible.h"
+#include "Enemigo.h"
 #include <QMainWindow>
+#include <QGraphicsView>
+#include <QGraphicsScene>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -19,5 +24,9 @@ public:
 
 private:
     Ui::MainWindow *ui;
+
+
+    QGraphicsView *vista;
+    QGraphicsScene *escena;
 };
 #endif // MAINWINDOW_H
