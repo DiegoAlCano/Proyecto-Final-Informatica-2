@@ -2,11 +2,12 @@
 #include <QGraphicsScene>
 #include "QDebug"
 
-Enemigo::Enemigo(bool lado)
+Enemigo::Enemigo(bool lado, int _SpriteX, int _SpriteY, int _spriteAncho, int _spriteAlto, std::string rutaSprite)
+    :Personaje(_SpriteX,_SpriteY,_spriteAncho,_spriteAlto)
 {
-    Enemigo_hojaSprites.load(":/Recursos/Enemigo1.png");
-    Enemigo_sprite = Enemigo_hojaSprites.copy(Enemigo_SpriteX,Enemigo_SpriteY,Enemigo_spriteAncho,Enemigo_spriteAlto);
-    setPixmap(Enemigo_sprite);
+    hojaSprites.load(QString::fromStdString(rutaSprite));
+    sprite = hojaSprites.copy(SpriteX,SpriteY,spriteAncho,spriteAlto);
+    setPixmap(sprite);
 
     if (lado) {
         setPos(0,560);
@@ -29,10 +30,10 @@ void Enemigo::moverHaciaHeroe() {
 
 
     if(velocidad==5){
-        Enemigo_confSprite(0);
+        secuenciaSprite(0,7);
     }
     else{
-        Enemigo_confSprite(50);
+        secuenciaSprite(50,7);
     }
 
 
@@ -50,21 +51,9 @@ void Enemigo::moverHaciaHeroe() {
     */
 
     // Si el enemigo sale de los límites de la escena, se elimina
-    if (x() < -50|| x() > 570) {  // Ajusta estos límites según el ancho de tu escena
+    if (x() < -50|| x() > 600) {  // Ajusta estos límites según el ancho de tu escena
         scene()->removeItem(this);
         delete this;
     }
 
-}
-
-void Enemigo::Enemigo_confSprite(int direccion)
-{
-    Enemigo_SpriteY = direccion;
-    Enemigo_SpriteX = Enemigo_spriteAncho*Enemigo_contador;
-    Enemigo_sprite = Enemigo_hojaSprites.copy(Enemigo_SpriteX,Enemigo_SpriteY,Enemigo_spriteAncho,Enemigo_spriteAlto);
-    setPixmap(Enemigo_sprite);
-    Enemigo_contador++;
-    if(Enemigo_contador==7){
-        Enemigo_contador = 0;
-    }
 }
