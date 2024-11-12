@@ -20,7 +20,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     vista->setScene(escena);
     vista->resize(background.width(),background.height());
-    Heroe *Homero = new Heroe;
+
+    Heroe *Homero = new Heroe(0,0,150,160,":/Recursos/SpriteHomeroCaminando.png");
     escena->addItem(Homero);
     Homero->setPos(0,450);
     Homero->setFlag(QGraphicsItem::ItemIsFocusable);
@@ -52,7 +53,7 @@ MainWindow::MainWindow(QWidget *parent)
     QTimer *enemigoTimer = new QTimer(this);
     connect(enemigoTimer, &QTimer::timeout, this, [=]() {
         bool lado = (rand() % 2 == 0);
-        Enemigo *enemigo = new Enemigo(lado);
+        Enemigo *enemigo = new Enemigo(lado,0,0,100,50,":/Recursos/Enemigo1.png");
 
         // Añadir el enemigo a la escena
         escena->addItem(enemigo);
