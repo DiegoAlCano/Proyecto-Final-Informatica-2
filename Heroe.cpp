@@ -28,14 +28,17 @@ void Heroe::keyPressEvent(QKeyEvent *event){
 
 void Heroe::movimiento(int dx, int dy)
 {
-    if(x>540){
-        x=540;
+    if(x>555){
+        x=555;
     }
 
-    else if(x<-38){
-        x=-38;
+    else if(x<-55){
+        x=-55;
     }
     x += dx;
     y += dy;
     setPos(x,y);
+    qDebug()<<"x: "<<x;
+    qDebug()<<"y: "<<y;
+
 }
