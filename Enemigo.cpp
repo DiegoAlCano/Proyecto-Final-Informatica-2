@@ -5,6 +5,7 @@
 Enemigo::Enemigo(bool lado, int _SpriteX, int _SpriteY, int _spriteAncho, int _spriteAlto, std::string rutaSprite)
     :Personaje(_SpriteX,_SpriteY,_spriteAncho,_spriteAlto)
 {
+
     hojaSprites.load(QString::fromStdString(rutaSprite));
     sprite = hojaSprites.copy(SpriteX,SpriteY,spriteAncho,spriteAlto);
     setPixmap(sprite);
@@ -48,12 +49,14 @@ void Enemigo::moverHaciaHeroe() {
             return;
         }
     }
-    */
 
+    */
     // Si el enemigo sale de los límites de la escena, se elimina
-    if (x() < -50|| x() > 600) {  // Ajusta estos límites según el ancho de tu escena
+    if (x() < -70|| x() > 650) {  // Ajusta estos límites según el ancho de tu escena
         scene()->removeItem(this);
         delete this;
+        qDebug()<<"Enemigo Eliminado";
     }
-
 }
+
+
