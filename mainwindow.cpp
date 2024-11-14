@@ -11,15 +11,32 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    this->vista = new QGraphicsView(this);
     this->escena = new QGraphicsScene(this);
+    ui->graphicsView->setScene(escena);
 
-    QPixmap background(":/Recursos/FondoNivel1.png");
+    this->vista = new QGraphicsView(this);
+    vista->resize(0,0);
+
+    QImage fondoMenu(":/Recursos/FondoMenu.png");
+    escena->setSceneRect(0,0,fondoMenu.width(),fondoMenu.height());
+    ui->graphicsView->setBackgroundBrush(QBrush(fondoMenu));
+
+
+}
+
+MainWindow::~MainWindow()
+{
+    delete ui;
+}
+
+void MainWindow::on_pushButton_1_clicked()
+{
+    QImage background(":/Recursos/FondoNivel1.png");
     escena->setBackgroundBrush(QBrush(background));
     escena->setSceneRect(0, 0, background.width(), background.height());
 
     vista->setScene(escena);
-    vista->resize(background.width(),background.height());
+    vista->resize(background.width()+20,background.height()+20);
 
     Heroe *Homero = new Heroe(0,0,150,160,":/Recursos/SpriteHomeroCaminando.png");
     escena->addItem(Homero);
@@ -35,7 +52,7 @@ MainWindow::MainWindow(QWidget *parent)
     // Temporizador para crear donas
     QTimer *donaTimer = new QTimer(this);
     connect(donaTimer, &QTimer::timeout, this, [=]() {
-    Consumible *dona = new Consumible();
+        Consumible *dona = new Consumible();
 
         // Generar una posición aleatoria en el eje x (ajustando al ancho de la escena)
         int randomX = std::rand() % 540;
@@ -45,7 +62,7 @@ MainWindow::MainWindow(QWidget *parent)
         escena->addItem(dona);
     });
 
-    donaTimer->start(1000);  // Crear una dona cada segundo
+    donaTimer->start(1500);  // Crear una dona cada segundo
 
     //Creacion Enemigos
 
@@ -59,11 +76,6 @@ MainWindow::MainWindow(QWidget *parent)
         escena->addItem(enemigo);
     });
 
-    enemigoTimer->start(3000);  // Crear un enemigo cada 2 segundos
-
+    enemigoTimer->start(3000);  // Crear un enemigo cada 3 segundos
 }
 
-MainWindow::~MainWindow()
-{
-    delete ui;
-}
