@@ -7,6 +7,7 @@
 #include <QMainWindow>
 #include <QGraphicsView>
 #include <QGraphicsScene>
+#include <QGraphicsTextItem>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -22,11 +23,15 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+private slots:
+    void on_pushButton_1_clicked();
+
+    void on_pushButton_7_clicked();
+
 private:
     Ui::MainWindow *ui;
-
-
     QGraphicsView *vista;
     QGraphicsScene *escena;
+
 };
 #endif // MAINWINDOW_H
