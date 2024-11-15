@@ -1,12 +1,13 @@
 #include "Enemigo.h"
+#include "Heroe.h"
 #include <QGraphicsScene>
 #include "QDebug"
 
-Enemigo::Enemigo(bool lado, int _SpriteX, int _SpriteY, int _spriteAncho, int _spriteAlto, std::string rutaSprite)
+Enemigo::Enemigo(bool lado, int _SpriteX, int _SpriteY, int _spriteAncho, int _spriteAlto, const QString &rutaSprite)
     :Personaje(_SpriteX,_SpriteY,_spriteAncho,_spriteAlto)
 {
 
-    hojaSprites.load(QString::fromStdString(rutaSprite));
+    hojaSprites.load(rutaSprite);
     sprite = hojaSprites.copy(SpriteX,SpriteY,spriteAncho,spriteAlto);
     setPixmap(sprite);
 
@@ -27,8 +28,7 @@ Enemigo::Enemigo(bool lado, int _SpriteX, int _SpriteY, int _spriteAncho, int _s
 
 void Enemigo::moverHaciaHeroe() {
 
-    setPos(x()+velocidad,560);
-
+    setPos(x()+velocidad,545);
 
     if(velocidad==5){
         secuenciaSprite(0,7);
@@ -38,25 +38,33 @@ void Enemigo::moverHaciaHeroe() {
     }
 
 
-    /*
     // Verificar colisión con el héroe
     QList<QGraphicsItem *> collidingItemsList = collidingItems();
     for (QGraphicsItem *item : collidingItemsList) {
-        if (dynamic_cast<Heroe *>(item)) {
-            // Si el enemigo golpea al héroe, se elimina el enemigo
-            scene()->removeItem(this);
-            delete this;
-            return;
+        Heroe *heroe = dynamic_cast<Heroe *>(item);
+        if (heroe) {
+            qreal posYHeroe = obtenerPosY(*heroe);
+            qDebug()<<"Colision detectada: "<<posYHeroe;
+            if (posYHeroe < 450) {
+                qDebug()<<"HeroeY: "<< posYHeroe;
+                qDebug() <<"Enemigo Eliminado: " << y();
+                scene()->removeItem(this);
+                delete this;
+                return;
+            }
+            else{
+                qDebug()<<"Mal: "<<posYHeroe;
+                heroe->disminuirVida(10);
+            }
         }
     }
 
-    */
     // Si el enemigo sale de los límites de la escena, se elimina
-    if (x() < -70|| x() > 650) {  // Ajusta estos límites según el ancho de tu escena
+
+    if (x() < -70|| x() > 650) {
         scene()->removeItem(this);
         delete this;
         qDebug()<<"Enemigo Eliminado";
     }
 }
-
 
