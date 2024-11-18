@@ -18,28 +18,34 @@ public:
     void disminuirVida(int cantidadVida);
     void disminuirMunicion();
     void mostrarInformacion();
-//    void disparar(int direccion);
+    void aumentarScore(int aumentoScore);
+
+    short int getVida();
+    bool get_enCaida();
+    unsigned short int getScore();
     friend qreal obtenerPosY(const Heroe &heroe);
     friend bool obtenerenElAire(const Heroe &heroe);
 
 private slots:
-    void actualizarSalto();  
+    void actualizarSalto();
 
 private:
 
+    //posicion
     qreal x = 0;
     qreal y = 450;
-    int vida;
-    int municion;
 
-    // Texto para mostrar la vida en la escena
-    QGraphicsTextItem *infoVida = nullptr;
+    //Especificaciones
+    short int vida;
+    unsigned short int municion;
+    unsigned short int score;
 
-    qreal velocidadY = 0;  // Velocidad vertical para el salto
+    //atributos para el salto
+    qreal velocidadY = 0;
     qreal velocidadX;
     int direccionHeroe;
-    bool enElAire = false; // Indica si el héroe está en el aire
-
+    bool enElAire = false;
+    bool enCaida = false;
     QTimer *saltoTimer;    // Temporizador para controlar el salto
 };
 
