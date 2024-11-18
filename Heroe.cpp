@@ -12,7 +12,6 @@ Heroe::Heroe(int _SpriteX, int _SpriteY, int _spriteAncho, int _spriteAlto, int 
     hojaSprites.load(rutaSprite);
     sprite = hojaSprites.copy(SpriteX,SpriteY,spriteAncho,spriteAlto);
     setPixmap(sprite);
-
     saltoTimer = new QTimer(this);
     connect(saltoTimer, &QTimer::timeout, this, &Heroe::actualizarSalto);
 }
@@ -37,7 +36,7 @@ void Heroe::keyPressEvent(QKeyEvent *event) {
     case Qt::Key_W:
         if (!enElAire) {               // Inicia el salto solo si el héroe está en el suelo
             velocidadY = -15;           // Velocidad inicial hacia arriba
-            velocidadX = 5*direccionHeroe;             
+            velocidadX = 5*direccionHeroe;
             enElAire = true;
             saltoTimer->start(30);      // Inicia el temporizador para el salto
         }
@@ -48,19 +47,23 @@ void Heroe::keyPressEvent(QKeyEvent *event) {
 }
 
 void Heroe::actualizarSalto() {
-    
+
     velocidadY += 1;
 
-    
     x += velocidadX;
 
-    
     y += velocidadY;
+
+    if(velocidadY>=0){
+        enCaida = true;
+    }
 
     // Limita las posiciones
     if (x > 555) {
         x = 555;
-    } else if (x < -55) {
+    }
+
+    else if (x < -55) {
         x = -55;
     }
 
@@ -68,12 +71,13 @@ void Heroe::actualizarSalto() {
     if (y == 450) {
         y = 450;
         enElAire = false;
+        enCaida = false;
         velocidadX = 0;  // Detiene el movimiento horizontal cuando aterriza
         saltoTimer->stop();
     }
 
     setPos(x, y);
-//    qDebug() <<"X: "<< x<<"Y: "<< y;
+    qDebug() <<"X: "<< x<<"Y: "<< y;
 
 }
 
@@ -88,8 +92,7 @@ void Heroe::movimiento(int dx, int dy) {
     x += dx;
     y += dy;
     setPos(x, y);
-//    qDebug() << "x: " << x;
-//    qDebug() << "y: " << y;
+
 }
 
 void Heroe::aumentarVida(int cantidadVida)
@@ -98,7 +101,6 @@ void Heroe::aumentarVida(int cantidadVida)
     if(vida>100){
         vida = 100;
     }
-    mostrarInformacion();
 }
 
 void Heroe::aumentarMunicion(int cantidadMunicion)
@@ -110,7 +112,6 @@ void Heroe::aumentarMunicion(int cantidadMunicion)
 void Heroe::disminuirVida(int cantidadVida)
 {
     vida -= cantidadVida;
-    mostrarInformacion();
 
 }
 
@@ -119,21 +120,24 @@ void Heroe::disminuirMunicion()
     municion -= 1;
 }
 
-void Heroe::mostrarInformacion()
+void Heroe::aumentarScore(int aumentoScore)
 {
-    // Si el texto ya existe, actualiza su contenido
-    if (infoVida) {
-        infoVida->setPlainText(QString("vida: %1").arg(vida));
-    } else {
-        // Crear el texto y posicionarlo en la escena, en la parte superior
-        infoVida = new QGraphicsTextItem(QString("Vida: %1").arg(vida));
-        infoVida->setDefaultTextColor(Qt::white);
-        infoVida->setFont(QFont("Algerian", 20));
-        infoVida->setPos(5, 0); // Posición en la parte superior izquierda
-        if (scene()) {
-            scene()->addItem(infoVida);
-        }
-    }
+    score = score+aumentoScore;
+}
+
+short int Heroe::getVida()
+{
+    return vida;
+}
+
+bool Heroe::get_enCaida()
+{
+    return enCaida;
+}
+
+unsigned short Heroe::getScore()
+{
+    return score;
 }
 
 /*
@@ -147,6 +151,4 @@ qreal obtenerPosY(const Heroe &heroe) {
 }
 
 bool obtenerenElAire(const Heroe &heroe){
-    return heroe.enElAire;
-}
-
+    
