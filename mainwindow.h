@@ -8,6 +8,7 @@
 #include <QGraphicsView>
 #include <QGraphicsScene>
 #include <QGraphicsTextItem>
+#include <QPushButton>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -22,16 +23,25 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+    void MenuPrincipal();
+    void quitarBotones();
+    void mostrarGameOver();
+    void mostrarVictoria();
+    void mostrarVida(QGraphicsRectItem *barraVidaAmarilla, int vida);
 
 private slots:
-    void on_pushButton_1_clicked();
-
-    void on_pushButton_7_clicked();
-
+    void iniciarNivel1();
+    void iniciarNivel2();
+    void salirJuego();
 private:
     Ui::MainWindow *ui;
     QGraphicsView *vista;
     QGraphicsScene *escena;
+
+    QPushButton *BotonNivel1;
+    QPushButton *BotonNivel2;
+    QPushButton *BotonNivel3;
+    QPushButton *BotonSalir;
 
 };
 #endif // MAINWINDOW_H
