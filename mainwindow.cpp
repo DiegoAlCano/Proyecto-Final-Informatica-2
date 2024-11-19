@@ -5,12 +5,15 @@
 #include <ctime>
 #include "QDebug"
 #include <time.h>
+#include <QPushButton>
+#include <QGraphicsProxyWidget>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    this->resize(670,670);
 
     this->escena = new QGraphicsScene(this);
     ui->graphicsView->setScene(escena);
@@ -22,16 +25,43 @@ MainWindow::MainWindow(QWidget *parent)
     escena->setSceneRect(0,0,fondoMenu.width(),fondoMenu.height());
     ui->graphicsView->setBackgroundBrush(QBrush(fondoMenu));
 
+    BotonNivel1 = new QPushButton("EL INFIERNO DE LAS ROSQUILLAS");
+    BotonNivel1->setFixedSize(300, 25); // Establecer tamaño del botón
+    BotonNivel1->setFont(QFont("Algerian", 10, QFont::Bold)); // Cambiar fuente y tamaño de texto
 
+    QGraphicsProxyWidget *proxyIniciarN1 = escena->addWidget(BotonNivel1);
+    proxyIniciarN1->setPos(160, 310); // Posición del botón en la escena
+
+    BotonNivel2 = new QPushButton("PESADILLA EN EL AUTOBUS");
+    BotonNivel2->setFixedSize(300, 25); // Establecer tamaño del botón
+    BotonNivel2->setFont(QFont("Algerian", 10, QFont::Bold)); // Cambiar fuente y tamaño de texto
+
+    QGraphicsProxyWidget *proxyIniciarN2 = escena->addWidget(BotonNivel2);
+    proxyIniciarN2->setPos(160, 350); // Posición del botón en la escena
+
+    BotonNivel3 = new QPushButton("EL REY DE LOS VAMPIROS");
+    BotonNivel3->setFixedSize(300, 25); // Establecer tamaño del botón
+    BotonNivel3->setFont(QFont("Algerian", 10, QFont::Bold)); // Cambiar fuente y tamaño de texto
+
+    QGraphicsProxyWidget *proxyIniciarN3 = escena->addWidget(BotonNivel3);
+    proxyIniciarN3->setPos(160, 390); // Posición del botón en la escena
+
+    BotonSalir = new QPushButton("SALIR");
+    BotonSalir->setFixedSize(300, 25); // Establecer tamaño del botón
+    BotonSalir->setFont(QFont("Algerian", 10, QFont::Bold)); // Cambiar fuente y tamaño de texto
+
+    QGraphicsProxyWidget *proxySalir = escena->addWidget(BotonSalir);
+    proxySalir->setPos(160, 430); // Posición del botón en la escena
+
+    connect(BotonNivel1, &QPushButton::clicked, this, &MainWindow::iniciarNivel1);
+    connect(BotonNivel2, &QPushButton::clicked, this, &MainWindow::iniciarNivel2);
+    connect(BotonSalir, &QPushButton::clicked, this, &MainWindow::salirJuego);
 }
 
-MainWindow::~MainWindow()
+void MainWindow::iniciarNivel1()
 {
-    delete ui;
-}
+    quitarBotones();
 
-void MainWindow::on_pushButton_1_clicked()
-{
     QImage background(":/Recursos/FondoNivel1.png");
     escena->setBackgroundBrush(QBrush(background));
     escena->setSceneRect(0, 0, background.width(), background.height());
@@ -79,11 +109,22 @@ void MainWindow::on_pushButton_1_clicked()
 
     enemigoTimer->start(2000);  // Crear un enemigo cada cierto tiempo
 
+    //Barras de Vida
+    QGraphicsRectItem *barraVidaRoja = new QGraphicsRectItem(0,0,100,20);
+    barraVidaRoja->setPos(50, 10); // Posición en la escena
+    barraVidaRoja->setBrush(QBrush(Qt::red));
+    escena->addItem(barraVidaRoja);
+
+    QGraphicsRectItem *barraVidaAmarilla = new QGraphicsRectItem();
+    barraVidaAmarilla->setPos(50, 10); // Posición en la escena
+    barraVidaAmarilla->setBrush(QBrush(Qt::yellow));
+    escena->addItem(barraVidaAmarilla);
+
     // Mostrar y actualizar el tiempo transcurrido
     QGraphicsTextItem *tiempoText = new QGraphicsTextItem();
     tiempoText->setDefaultTextColor(Qt::white);
     tiempoText->setFont(QFont("Algerian", 20));
-    tiempoText->setPos(150,0);
+    tiempoText->setPos(500,0);
     escena->addItem(tiempoText);
 
     int *tiempoRestante = new int(300);  // 5 minutos en segundos
@@ -93,66 +134,87 @@ void MainWindow::on_pushButton_1_clicked()
             *tiempoRestante -= 1;
             int minutos = *tiempoRestante / 60;
             int segundos = *tiempoRestante % 60;
-            tiempoText->setPlainText(QString("Tiempo: %1:%2")
+            tiempoText->setPlainText(QString("%1:%2")
                                          .arg(minutos, 2, 10, QChar('0'))
                                          .arg(segundos, 2, 10, QChar('0')));
         }
 
         else {
             duracionNivel->stop();
-            tiempoText->setPlainText("¡Tiempo agotado!");
             Homero->disminuirVida(Homero->getVida());
         }
     });
     duracionNivel->start(1000);  // Actualizar cada segundo
 
 
+    QGraphicsTextItem *VidaText = new QGraphicsTextItem();
+    VidaText->setDefaultTextColor(Qt::white);
+    VidaText->setFont(QFont("Algerian", 20));
+    VidaText->setPos(0,0);
+    escena->addItem(VidaText);
+
     //Donas Consumidas
     QGraphicsTextItem *DonasText = new QGraphicsTextItem();
     DonasText->setDefaultTextColor(Qt::white);
     DonasText->setFont(QFont("Algerian", 20));
-    DonasText->setPos(350,0);
+    DonasText->setPos(300,0);
     escena->addItem(DonasText);
 
-    QTimer *actualizarDonas = new QTimer(this);
-    connect(actualizarDonas, &QTimer::timeout, this, [=](){
+    QTimer *actualizarInfo = new QTimer(this);
+    connect(actualizarInfo, &QTimer::timeout, this, [=](){
+        short int vidaActual = Homero->getVida();
         unsigned short int donasComidas = Homero->getScore();
 
+        mostrarVida(barraVidaAmarilla,vidaActual);
+
+        VidaText->setPlainText(QString("HP:                %1/100").arg(vidaActual));
         DonasText->setPlainText(QString("Donas: %1").arg(donasComidas));
-
-    });
-    actualizarDonas->start(500);
-
-
-    QGraphicsTextItem *VidaText = new QGraphicsTextItem();
-    VidaText->setDefaultTextColor(Qt::white);
-    VidaText->setFont(QFont("Algerian", 20));
-    VidaText->setPos(5,0);
-    escena->addItem(VidaText);
-
-    QTimer *actualizarVida = new QTimer(this);
-    connect(actualizarVida, &QTimer::timeout, this, [=](){
-        short int vidaActual = Homero->getVida();
-        VidaText->setPlainText(QString("Vida: %1").arg(vidaActual));
         if (vidaActual <= 0) {
-            actualizarVida->stop();
+
+            actualizarInfo->stop();
             duracionNivel->stop();
             donaTimer->stop();
             enemigoTimer->stop();
-            actualizarDonas->stop();
-            escena->clear();
-            qDebug() << "La vida ha llegado a 0. Sal del nivel.";
+            actualizarInfo->stop();
 
+            escena->removeItem(Homero);
+            escena->removeItem(VidaText);
+            escena->removeItem(DonasText);
+            escena->removeItem(tiempoText);
+            escena->removeItem(barraVidaAmarilla);
+            escena->removeItem(barraVidaRoja);
+
+            qDebug() << "La vida ha llegado a 0. Sal del nivel.";
+            mostrarGameOver();
+        }
+
+        else if(donasComidas==100){
+
+            duracionNivel->stop();
+            donaTimer->stop();
+            enemigoTimer->stop();
+            actualizarInfo->stop();
+
+            escena->removeItem(Homero);
+            escena->removeItem(DonasText);
+            escena->removeItem(tiempoText);
+            escena->removeItem(VidaText);
+            escena->removeItem(barraVidaAmarilla);
+            escena->removeItem(barraVidaRoja);
+
+            mostrarVictoria();
 
         }
     });
-    actualizarVida->start(100);
+    actualizarInfo->start(100);
 
 }
 
 
-void MainWindow::on_pushButton_7_clicked()
+void MainWindow::iniciarNivel2()
 {
+    quitarBotones();
+
     QImage background(":/Recursos/FondoNivel2.png");
     escena->setBackgroundBrush(QBrush(background));
     escena->setSceneRect(0, 0, background.width(), background.height());
@@ -184,7 +246,7 @@ void MainWindow::on_pushButton_7_clicked()
         escena->addItem(Piedras);
     });
 
-    donaTimer->start(10000);  // Crear una dona cada segundo
+    donaTimer->start(10000);
 
     //Creacion Enemigos
 
@@ -198,5 +260,76 @@ void MainWindow::on_pushButton_7_clicked()
         escena->addItem(enemigo);
     });
 
-    enemigoTimer->start(3000);  // Crear un enemigo cada 3 segundos
+    enemigoTimer->start(3000);
+}
+
+void MainWindow::MenuPrincipal()
+{
+
+    QImage fondoMenu(":/Recursos/FondoMenu.png");
+    escena->setBackgroundBrush(QBrush(fondoMenu));
+    escena->setSceneRect(0,0,fondoMenu.width(),fondoMenu.height());
+    ui->graphicsView->setBackgroundBrush(QBrush(fondoMenu));
+    vista->setScene(escena);
+
+    BotonNivel1->show();
+    BotonNivel2->show();
+    BotonNivel3->show();
+    BotonSalir->show();
+
+}
+
+
+void MainWindow::quitarBotones()
+{
+
+    BotonNivel1->hide();
+    BotonNivel2->hide();
+    BotonNivel3->hide();
+    BotonSalir->hide();
+
+}
+
+void MainWindow::mostrarGameOver()
+{
+
+    QGraphicsPixmapItem* gameOverImage = new QGraphicsPixmapItem(QPixmap(":/Recursos/GameOver.png"));
+    gameOverImage->setPos(-10, 0);
+    escena->addItem(gameOverImage);
+
+    QTimer::singleShot(5000, this, [=]() {
+        escena->removeItem(gameOverImage);
+        MenuPrincipal();
+    });
+
+}
+
+void MainWindow::mostrarVictoria()
+{
+    QGraphicsPixmapItem* VictoryImage = new QGraphicsPixmapItem(QPixmap(":/Recursos/FondoVictoria.png"));
+    VictoryImage->setPos(-10, 0);
+    escena->addItem(VictoryImage);
+
+    QTimer::singleShot(5000, this, [=]() {
+        escena->removeItem(VictoryImage);
+        MenuPrincipal();
+    });
+}
+
+void MainWindow::mostrarVida(QGraphicsRectItem *barraVidaAmarilla ,int vidaActual)
+{
+    short int vidaDisponible = 100-vidaActual;
+
+    barraVidaAmarilla->setRect(100-vidaDisponible,0,vidaDisponible,20);
+}
+
+
+void MainWindow::salirJuego()
+{
+    close();
+}
+
+MainWindow::~MainWindow()
+{
+    delete ui;
 }
