@@ -25,13 +25,14 @@ public:
     ~MainWindow();
     void MenuPrincipal();
     void quitarBotones();
-    void mostrarGameOver();
-    void mostrarVictoria();
+    void mostrarGameOver(QGraphicsScene *escenaActual);
+    void mostrarVictoria(QGraphicsScene *escenaActual);
     void mostrarVida(QGraphicsRectItem *barraVidaAmarilla, int vida);
 
 private slots:
     void iniciarNivel1();
     void iniciarNivel2();
+    void iniciarNivel3();
     void salirJuego();
 private:
     Ui::MainWindow *ui;
@@ -42,6 +43,10 @@ private:
     QPushButton *BotonNivel2;
     QPushButton *BotonNivel3;
     QPushButton *BotonSalir;
+
+    //Para el nivel 3 - Control del flujo de las salas
+    bool fondoCambiado1;
+    bool fondoCambiado2;
 
 };
 #endif // MAINWINDOW_H
