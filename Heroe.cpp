@@ -4,11 +4,13 @@
 #include "mainwindow.h"
 #include "QGraphicsTextItem"
 
-Heroe::Heroe(int _SpriteX, int _SpriteY, int _spriteAncho, int _spriteAlto, int _vida, int _municion, const QString &rutaSprite)
+Heroe::Heroe(char _nivel, qreal _y, int _SpriteX, int _SpriteY, int _spriteAncho, int _spriteAlto, int _vida, int _municion, const QString &rutaSprite)
     :Personaje(_SpriteX,_SpriteY,_spriteAncho,_spriteAlto)
 {
+    nivel = _nivel;
     vida = _vida;
     municion = _municion;
+    y = _y;
     hojaSprites.load(rutaSprite);
     sprite = hojaSprites.copy(SpriteX,SpriteY,spriteAncho,spriteAlto);
     setPixmap(sprite);
@@ -22,14 +24,14 @@ void Heroe::keyPressEvent(QKeyEvent *event) {
     case Qt::Key_A:
         if (!enElAire) {
             direccionHeroe = -1;
-            movimiento(-6, 0);        // Movimiento en el suelo
+            movimiento(-6, 0, nivel);        // Movimiento en el suelo
             secuenciaSprite(160, 8);
         }
         break;
     case Qt::Key_D:
         if (!enElAire) {
             direccionHeroe = 1;
-            movimiento(6, 0);         // Movimiento en el suelo
+            movimiento(6, 0, nivel);         // Movimiento en el suelo
             secuenciaSprite(0, 8);
         }
         break;
@@ -60,6 +62,14 @@ void Heroe::keyPressEvent(QKeyEvent *event) {
     case Qt::Key_P:
         if(municion>0){
             disparar(direccionHeroe);
+            if(direccionHeroe==1){
+                Proyectil *proyectil = new Proyectil(10,30,7.5,x+90,y+50,direccionHeroe);
+                scene()->addItem(proyectil);
+            }
+            else{
+                Proyectil *proyectil = new Proyectil(10,30,7.5,x-20,y+50,direccionHeroe);
+                scene()->addItem(proyectil);
+            }
         }
         break;
     default:
@@ -79,33 +89,58 @@ void Heroe::actualizarSalto() {
         enCaida = true;
     }
 
-    // Limita las posiciones
-    if (x > 555) {
-        x = 555;
-    }
-
-    else if (x < -55) {
-        x = -55;
-    }
-
-    // Si el héroe alcanza el suelo, detiene el salto
-    if (y == 450) {
-        y = 450;
-        enElAire = false;
-        enCaida = false;
-        velocidadX = 0;  // Detiene el movimiento horizontal cuando aterriza
-        saltoTimer->stop();
-
-        if(direccionHeroe==1){
-            secuenciaSprite(0,8);
+    if(nivel=='1'){
+        // Limita las posiciones
+        if (x > 555) {
+            x = 555;
         }
 
-        else{
-            secuenciaSprite(160,8);
+        else if (x < -55) {
+            x = -55;
         }
 
+        // Si el héroe alcanza el suelo, detiene el salto
+        if (y == 450) {
+            y = 450;
+            enElAire = false;
+            enCaida = false;
+            velocidadX = 0;  // Detiene el movimiento horizontal cuando aterriza
+            saltoTimer->stop();
+
+            if(direccionHeroe==1){
+                secuenciaSprite(0,8);
+            }
+
+            else{
+                secuenciaSprite(160,8);
+            }
+
+        }
     }
 
+    else{
+        if (x > 530){
+            x = 530;
+        }
+        else if(x < 90){
+            x=90;
+        }
+        if(y == 130) {
+            y = 130;
+            enElAire = false;
+            enCaida =  false;
+            velocidadX = 0;
+            saltoTimer->stop();
+
+            if(direccionHeroe==1){
+                secuenciaSprite(0,8);
+            }
+
+            else{
+                secuenciaSprite(160,8);
+            }
+        }
+    }
     setPos(x, y);
 //    secuenciaSprite(640,8);
 //    qDebug() <<"X: "<< x<<"Y: "<< y;
@@ -113,14 +148,26 @@ void Heroe::actualizarSalto() {
 }
 
 
-void Heroe::movimiento(int dx, int dy) {
+void Heroe::movimiento(int dx, int dy, char nivel) {
 
-    if (x > 555) {
-        x = 555;
+    if(nivel=='1'){
+        if (x > 555) {
+            x = 555;
+        }
+
+        else if (x < -55) {
+            x = -55;
+        }
     }
 
-    else if (x < -55) {
-        x = -55;
+    else{
+        if(x > 530) {
+            x = 530;
+        }
+
+        else if (x < 90) {
+            x =90;
+        }
     }
     x += dx;
     y += dy;
@@ -140,8 +187,8 @@ void Heroe::aumentarMunicion(int cantidadMunicion)
 {
     municion += cantidadMunicion;
 
-    if(municion>=12){
-        municion = 12;
+    if(municion>=15){
+        municion = 15;
     }
 
 }
@@ -160,6 +207,8 @@ void Heroe::disminuirVida(int cantidadVida)
     else{
         secuenciaSprite(480,8);
     }
+
+    qDebug()<<"Golpe";
 
 }
 
@@ -192,6 +241,11 @@ unsigned short Heroe::getScore()
     return score;
 }
 
+unsigned short Heroe::getMunicion()
+{
+    return municion;
+}
+
 qreal Heroe::getPosX()
 {
     return x;
@@ -201,7 +255,8 @@ qreal Heroe::getPosX()
 void Heroe::disparar(int direccion)
 {
 
-    setPos(x,y);
+    //setPos(x,y);
+    disminuirMunicion();
 
     if(direccion==1){
         secuenciaSprite(960,8);
@@ -224,4 +279,3 @@ qreal obtenerPosY(const Heroe &heroe) {
 bool obtenerenElAire(const Heroe &heroe){
     return heroe.enElAire;
 }
-    
