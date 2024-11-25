@@ -19,15 +19,18 @@ void Consumible::caida()
 {
     setPos(x(), y() + velocidadCaida);  // Mover la dona hacia abajo
 
+    // Verificar si colisiona con el héroe
     QList<QGraphicsItem *> collidingItemsList = collidingItems();
     for (QGraphicsItem *item : collidingItemsList) {
-        // Verificar si el elemento con el que colisiona es el héroe
         Heroe *heroe = dynamic_cast<Heroe *>(item);
         if (heroe) {
             // Aumentar vida y munición del héroe
-            heroe->aumentarVida(aumentoVida);
-            heroe->aumentarMunicion(aumentoMunicion);
-            heroe->aumentarScore(1);
+            if (aumentoMunicion == 0 and aumentoVida == 0) {
+                heroe->aumentarScore(1);
+            } else {
+                heroe->aumentarVida(aumentoVida);
+                heroe->aumentarMunicion(aumentoMunicion);
+            }
 
             // Eliminar el consumible de la escena
             scene()->removeItem(this);
@@ -37,9 +40,9 @@ void Consumible::caida()
     }
 
     // Eliminar la dona si sale de la pantalla
-    if (y() > 620) {
+    if (y() > scene()->height()) {
         scene()->removeItem(this);
         delete this;
-        qDebug() <<"Dona eliminada";
+        qDebug() << "Dona eliminada";
     }
 }
