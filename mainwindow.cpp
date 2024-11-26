@@ -244,6 +244,7 @@ void MainWindow::iniciarNivel2()
     Bart->setFlag(QGraphicsItem::ItemIsFocusable);
     Bart->setFocus();
 
+
     // Temporizador para crear enemigos desde los bordes
     QTimer *enemigoTimer = new QTimer(this);
     connect(enemigoTimer, &QTimer::timeout, this, [=]() {
@@ -256,6 +257,7 @@ void MainWindow::iniciarNivel2()
     });
     enemigoTimer->start(2000);
     timers.append(enemigoTimer);
+
 
     QGraphicsRectItem *barraVidaRoja = nullptr;
     QGraphicsRectItem *barraVidaAmarilla = nullptr;
@@ -296,11 +298,9 @@ void MainWindow::iniciarNivel2()
         ScoreActualText->setPlainText(QString("x%1").arg(scoreActual));
         //Condicion de Derrota
         if(scoreActual == 12){
-
-            delete ScoreActualText;
-            delete Bart;
-            escenaNivel2->clear();
             detenerTimers();
+
+            escenaNivel2->clear();
 
             iniciarSegundaParteNivel2(escenaNivel2);
         }
@@ -355,18 +355,6 @@ void MainWindow::iniciarNivel3()
     });
 
     FlechasTimer->start(10000);
-
-    /*
-    QTimer *enemigoTimer = new QTimer(this);
-    connect(enemigoTimer, &QTimer::timeout, this, [=]() {
-        bool lado = (rand() % 2 == 0);
-        Enemigo *enemigo = new Enemigo(lado,0,0,150,160,15,10,":/Recursos/Enemigo2.png");
-
-        // Añadir el enemigo a la escena
-        escenaNivel3->addItem(enemigo);
-    });
-    enemigoTimer->start(3000);
-    */
 
     QTimer *posHeroe = new QTimer(this);
     connect(posHeroe, &QTimer::timeout, this, [=]() {
@@ -539,15 +527,16 @@ void MainWindow::iniciarSegundaParteNivel2(QGraphicsScene *escenaActual)
         vidaEnemigoText->setPlainText(QString("%1").arg(vidaEnemigo));
         //Condicion de Derrota
         if (vidaActual <= 0) {
-            escenaActual->clear();
+
             detenerTimers();
+            escenaActual->clear();
 
             mostrarGameOver(escenaActual);
         }
 
         else if(vidaEnemigo == 0){
-            escenaActual->clear();
             detenerTimers();
+            escenaActual->clear();
 
             mostrarVictoria(escenaActual);
         }
