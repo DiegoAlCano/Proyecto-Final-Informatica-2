@@ -4,20 +4,21 @@
 #include "QDebug"
 #include <cmath>
 
-Enemigo::Enemigo(bool lado, int _SpriteX, int _SpriteY, int _spriteAncho, int _spriteAlto, int _daño, int _velocidad, const QString &rutaSprite)
+Enemigo::Enemigo(bool lado, int _SpriteX, int _SpriteY, int _spriteAncho, int _spriteAlto, int _daño, int _velocidad, short y, short _numSprites, const QString &rutaSprite)
     :Personaje(_SpriteX,_SpriteY,_spriteAncho,_spriteAlto)
 {
     daño = _daño;
+    numSprites = _numSprites;
 
     hojaSprites.load(rutaSprite);
     sprite = hojaSprites.copy(SpriteX,SpriteY,spriteAncho,spriteAlto);
     setPixmap(sprite);
 
     if (lado) {
-        setPos(-20,505);
+        setPos(-20,y);
         velocidad = _velocidad;
     } else {
-        setPos(540,505);
+        setPos(540,y);
         velocidad = _velocidad*(-1);
     }
 
@@ -29,11 +30,12 @@ Enemigo::Enemigo(bool lado, int _SpriteX, int _SpriteY, int _spriteAncho, int _s
 }
 
 
-Enemigo::Enemigo(bool lado, int _SpriteX, int _SpriteY, int _spriteAncho, int _spriteAlto, int _daño, int _velocidad, int x1, int x2, int y,int _vida, const QString &rutaSprite)
+Enemigo::Enemigo(bool lado, int _SpriteX, int _SpriteY, int _spriteAncho, int _spriteAlto, int _daño, int _velocidad, int x1, int x2, int y, int _vida, short _numSprites, const QString &rutaSprite)
     :Personaje(_SpriteX,_SpriteY,_spriteAncho,_spriteAlto)
 {
     daño = _daño;
     vida = _vida;
+    numSprites = _numSprites;
 
     hojaSprites.load(rutaSprite);
     sprite = hojaSprites.copy(SpriteX,SpriteY,spriteAncho,spriteAlto);
@@ -54,10 +56,11 @@ Enemigo::Enemigo(bool lado, int _SpriteX, int _SpriteY, int _spriteAncho, int _s
 }
 
 
-Enemigo::Enemigo(int _SpriteX, int _SpriteY, int _spriteAncho, int _spriteAlto,int _daño, const QString &rutaSprite)
+Enemigo::Enemigo(int _SpriteX, int _SpriteY, int _spriteAncho, int _spriteAlto, int _daño, short _numSprites, const QString &rutaSprite)
     :Personaje(_SpriteX,_SpriteY,_spriteAncho,_spriteAlto)
 {
     daño = _daño;
+    numSprites = _numSprites;
 
     hojaSprites.load(rutaSprite);
     sprite = hojaSprites.copy(SpriteX,SpriteY,spriteAncho,spriteAlto);
@@ -69,12 +72,13 @@ Enemigo::Enemigo(int _SpriteX, int _SpriteY, int _spriteAncho, int _spriteAlto,i
 
 }
 
-Enemigo::Enemigo(int _vida,int _SpriteX, int _SpriteY, int _spriteAncho, int _spriteAlto,int _daño,int _velocidad, const QString &rutaSprite)
+Enemigo::Enemigo(int _vida, int _SpriteX, int _SpriteY, int _spriteAncho, int _spriteAlto, int _daño, int _velocidad, short _numSprites, const QString &rutaSprite)
         :Personaje(_SpriteX,_SpriteY,_spriteAncho,_spriteAlto)
 {
     daño = _daño;
     vida = _vida;
     velocidad = _velocidad;
+    numSprites = _numSprites;
 
     hojaSprites.load(rutaSprite);
     sprite = hojaSprites.copy(SpriteX,SpriteY,spriteAncho,spriteAlto);
@@ -93,10 +97,10 @@ void Enemigo::moverHaciaHeroe() {
     setPos(x() + velocidad, y());
 
     if (velocidad>0 ) {
-        secuenciaSprite(0, 7);
+        secuenciaSprite(0, numSprites);
     }
     else {
-        secuenciaSprite(125, 7);
+        secuenciaSprite(spriteAlto, numSprites);
     }
 
     // Verificar colisión con el héroe
@@ -132,7 +136,7 @@ void Enemigo::moverSenoidal()
     setPos(x() + 8, nuevaPosY);  // Avanza en X y ajusta la posición en Y
 
     // Cambia la secuencia del sprite
-    secuenciaSprite(0, 6);
+    secuenciaSprite(0, numSprites);
 
     // Si el enemigo supera el límite derecho de la escena, se elimina
     if (x() > 650) {
@@ -187,7 +191,7 @@ void Enemigo::moverRapido()
     if (moviendoIzquierda) {
         // Mover hacia la izquierda
         setPos(x() - velocidad, y());
-        secuenciaSprite(130, 7);
+        secuenciaSprite(spriteAlto, numSprites);
 
         if (x() <= -10) {
             moviendoIzquierda = false; // Cambiar dirección al llegar a -10
@@ -197,10 +201,10 @@ void Enemigo::moverRapido()
     else {
         // Mover hacia la derecha
         setPos(x() + velocidad, y());
-        secuenciaSprite(0, 7);
+        secuenciaSprite(0, numSprites);
 
         if (x() >= 550) {
-            secuenciaSprite(130, 7);
+            secuenciaSprite(spriteAlto, numSprites);
             moveTimer->stop();
             delete moveTimer; // Limpiar el temporizador
             moveTimer = nullptr;
@@ -215,10 +219,10 @@ void Enemigo::mover()
     setPos(x() + velocidad,y());
 
     if (velocidad>0 ) {
-        secuenciaSprite(0, 7);
+        secuenciaSprite(0, numSprites);
     }
     else {
-        secuenciaSprite(125, 7);
+        secuenciaSprite(spriteAlto, numSprites);
     }
 
     QList<QGraphicsItem *> colisiones = collidingItems();
@@ -275,3 +279,4 @@ void Enemigo::saltoMuerte() {
         qDebug() << "Enemigo Eliminado";
     }
 }
+
