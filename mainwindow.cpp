@@ -333,7 +333,7 @@ void MainWindow::iniciarNivel3()
     vista->setScene(escenaNivel3);
     vista->resize(background.width() + 20, background.height() + 20);
 
-    Heroe *Homero = new Heroe('1',450,0, 0, 150, 160, 100, 12, ":/Recursos/SpritesHomero.png");
+    Heroe *Homero = new Heroe('3',450,0, 0, 150, 160, 100, 12, ":/Recursos/SpritesHomero.png");
     escenaNivel3->addItem(Homero);
     Homero->setPos(0, 450);
     Homero->setFlag(QGraphicsItem::ItemIsFocusable);
@@ -399,42 +399,65 @@ void MainWindow::iniciarNivel3()
 
     posHeroe->start(100);
 
-    if(!fondoCambiado1 and !fondoCambiado2){
-        añadirElementoGrafico(escenaNivel3, 0,-5,":/Recursos/corazon.png");
-        añadirElementoGrafico(escenaNivel3,300,0,":/Recursos/piedra.png");
-        añadirElementoGrafico(escenaNivel3,450,0,":/Recursos/ImagenGremlin.png");
 
-        // Temporizador para crear enemigos desde los bordes
-        QTimer *enemigoTimer = new QTimer(this);
-        connect(enemigoTimer, &QTimer::timeout, this, [=]() {
-            bool lado = (rand() % 2 == 0);
-            Enemigo *enemigo = new Enemigo(lado,0,0,150,160,20,10,0,600,440,20,8,":/Recursos/Enemigo2.png");
+    QTimer *enemigoTimer = new QTimer(this);  // Fuera del estadoActual
+    QTimer *rataTimer = new QTimer(this);    // Fuera del estadoActual
+    QTimer *murcielagoTimer = new QTimer(this);
+    QTimer *manoTimer = new QTimer(this);
 
-            // Añadir el enemigo a la escena
-            escenaNivel3->addItem(enemigo);
-            connect(enemigo, &Enemigo::enemigoEliminado, Homero, &Heroe::aumentarScore);
-        });
-        enemigoTimer->start(4500);
-        timers.append(enemigoTimer);
+    timers.append(enemigoTimer);
+    timers.append(rataTimer);
+    timers.append(murcielagoTimer);
 
-        // Temporizador para crear enemigos desde los bordes
-        QTimer *rataTimer = new QTimer(this);
-        connect(rataTimer, &QTimer::timeout, this, [=]() {
-            bool lado = (rand() % 2 == 0);
-            Enemigo *enemigoRata = new Enemigo(lado,0,0,125,100,10,9,525,5,":/Recursos/EnemigoRata.png");
+    QTimer *estadoActual = new QTimer(this);
+    connect(estadoActual, &QTimer::timeout, this, [=]() {
+        if (!fondoCambiado1 && !fondoCambiado2) {
+            if (!enemigoTimer->isActive()) { // Asegurar que solo se inicialicen una vez
+                connect(enemigoTimer, &QTimer::timeout, this, [=]() {
+                    bool lado = (rand() % 2 == 0);
+                    Enemigo *enemigo = new Enemigo(lado, 0, 0, 150, 160, 20, 10, 0, 600, 440, 20, 8, ":/Recursos/Enemigo2.png");
+                    escenaNivel3->addItem(enemigo);
+                    connect(enemigo, &Enemigo::enemigoEliminado, Homero, &Heroe::aumentarScore);
+                });
+                enemigoTimer->start(4000);
+            }
 
-            // Añadir el enemigo a la escena
-            escenaNivel3->addItem(enemigoRata);
-        });
-        rataTimer->start(2500);
-        timers.append(rataTimer);
-    }
+            if (!rataTimer->isActive()) { // Asegurar que solo se inicialicen una vez
+                connect(rataTimer, &QTimer::timeout, this, [=]() {
+                    bool lado = (rand() % 2 == 0);
+                    Enemigo *enemigoRata = new Enemigo(lado, 0, 0, 125, 100, 10, 9, 525, 5, ":/Recursos/EnemigoRata.png");
+                    escenaNivel3->addItem(enemigoRata);
+                });
+                rataTimer->start(2000);
+            }
+        }
 
-    if(fondoCambiado1==true and fondoCambiado2==false){
-        qDebug()<<fondoCambiado1<<"  "<<fondoCambiado2;
-        detenerTimers();
-    }
+        if (fondoCambiado1 && !fondoCambiado2){
+            rataTimer->stop();
+            enemigoTimer->stop();
+            if(!murcielagoTimer->isActive()){
+                connect(murcielagoTimer, &QTimer::timeout, this, [=]() {
+                    Enemigo *murcielago = new Enemigo(0,0,146,50,20,6,":/Recursos/EnemigoVolador.png");
+                    escenaNivel3->addItem(murcielago);
+                });
+                murcielagoTimer->start(3500);
+            }
 
+            if (!manoTimer->isActive()) {
+                connect(manoTimer, &QTimer::timeout, this, [=]() {
+                    // Generar un número aleatorio entre -50 y 550
+                    int randomX = (std::rand() % 601) - 50; // 601 = 550 - (-50) + 1
+
+                    Enemigo *mano = new Enemigo(randomX, 0, 0, 100, 200, 10, 11);
+                    escenaNivel3->addItem(mano);
+                });
+                manoTimer->start(2000);
+            }
+
+            //detenerTimers(); // Detiene todos los temporizadores cuando se cambia el fondo
+        }
+    });
+    estadoActual->start(100);
 }
 
 void MainWindow::MenuPrincipal()
@@ -514,7 +537,7 @@ void MainWindow::iniciarSegundaParteNivel2(QGraphicsScene *escenaActual)
     // Temporizador para crear donas
     QTimer *PiedrasTimer = new QTimer(this);
     connect(PiedrasTimer, &QTimer::timeout, this, [=]() {
-        Consumible *Piedras = new Consumible(":/Recursos/Piedras.png",10,5,10);
+        Consumible *Piedras = new Consumible(":/Recursos/Piedras.png",10,5,0);
         int randomX = std::rand() % 540;
         Piedras->setPos(randomX, 0);
         escenaActual->addItem(Piedras);
