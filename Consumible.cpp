@@ -43,6 +43,5 @@ void Consumible::caida()
     if (y() > scene()->height()) {
         scene()->removeItem(this);
         delete this;
-        qDebug() << "Dona eliminada";
     }
 }
