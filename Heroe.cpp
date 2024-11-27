@@ -24,14 +24,14 @@ void Heroe::keyPressEvent(QKeyEvent *event) {
     case Qt::Key_A:
         if (!enElAire) {
             direccionHeroe = -1;
-            movimiento(-6, 0, nivel);        // Movimiento en el suelo
+            movimiento(-6, 0);        // Movimiento en el suelo
             secuenciaSprite(160, 8);
         }
         break;
     case Qt::Key_D:
         if (!enElAire) {
             direccionHeroe = 1;
-            movimiento(6, 0, nivel);         // Movimiento en el suelo
+            movimiento(6, 0);         // Movimiento en el suelo
             secuenciaSprite(0, 8);
         }
         break;
@@ -62,15 +62,28 @@ void Heroe::keyPressEvent(QKeyEvent *event) {
     case Qt::Key_P:
         if(municion>0){
             disparar(direccionHeroe);
-            if(direccionHeroe==1){
-                Proyectil *proyectil = new Proyectil(10,30,7.5,x+90,y+50,direccionHeroe);
-                scene()->addItem(proyectil);
+            if(nivel=='2' or nivel=='1'){
+                if(direccionHeroe==1){
+                    Proyectil *proyectil = new Proyectil(10,30,7.5,x+90,y+50,direccionHeroe);
+                    scene()->addItem(proyectil);
+                }
+                else{
+                    Proyectil *proyectil = new Proyectil(10,30,7.5,x-20,y+50,direccionHeroe);
+                    scene()->addItem(proyectil);
+                }
             }
-            else{
-                Proyectil *proyectil = new Proyectil(10,30,7.5,x-20,y+50,direccionHeroe);
-                scene()->addItem(proyectil);
+            else if(nivel=='3'){
+                if(direccionHeroe==1){
+                    Proyectil *proyectil = new Proyectil(10,x+90,y+42,direccionHeroe);
+                    scene()->addItem(proyectil);
+                }
+                else{
+                    Proyectil *proyectil = new Proyectil(10,x-20,y+42,direccionHeroe);
+                    scene()->addItem(proyectil);
+                }
             }
         }
+
         break;
     default:
         break;
@@ -89,7 +102,7 @@ void Heroe::actualizarSalto() {
         enCaida = true;
     }
 
-    if(nivel=='1'){
+    if(nivel=='1' or nivel=='3'){
         // Limita las posiciones
         if (x > 555) {
             x = 555;
@@ -148,9 +161,9 @@ void Heroe::actualizarSalto() {
 }
 
 
-void Heroe::movimiento(int dx, int dy, char nivel) {
+void Heroe::movimiento(int dx, int dy) {
 
-    if(nivel=='1'){
+    if(nivel=='1' or nivel=='3'){
         if (x > 555) {
             x = 555;
         }
@@ -255,7 +268,6 @@ qreal Heroe::getPosX()
 void Heroe::disparar(int direccion)
 {
 
-    //setPos(x,y);
     disminuirMunicion();
 
     if(direccion==1){
