@@ -108,7 +108,7 @@ void MainWindow::iniciarNivel1()
     QTimer *enemigoTimer = new QTimer(this);
     connect(enemigoTimer, &QTimer::timeout, this, [=]() {
         bool lado = (rand() % 2 == 0);
-        Enemigo *enemigo = new Enemigo(lado,0,0,125,125,15,9,":/Recursos/SpriteEnemigo.png");
+        Enemigo *enemigo = new Enemigo(lado,0,0,125,125,15,9,505,7,":/Recursos/SpriteEnemigo.png");
 
         // Añadir el enemigo a la escena
         escenaNivel1->addItem(enemigo);
@@ -119,7 +119,7 @@ void MainWindow::iniciarNivel1()
 
     QTimer *enemigoVoladorTimer = new QTimer(this);
     connect(enemigoVoladorTimer, &QTimer::timeout, this, [=]() {
-        Enemigo *enemigoVolador = new Enemigo(0,0,146,50,20,":/Recursos/EnemigoVolador.png");
+        Enemigo *enemigoVolador = new Enemigo(0,0,146,50,20,6,":/Recursos/EnemigoVolador.png");
 
         // Añadir el enemigo a la escena
         escenaNivel1->addItem(enemigoVolador);
@@ -249,7 +249,7 @@ void MainWindow::iniciarNivel2()
     QTimer *enemigoTimer = new QTimer(this);
     connect(enemigoTimer, &QTimer::timeout, this, [=]() {
         bool lado = (rand() % 2 == 0);
-        Enemigo *enemigo = new Enemigo(lado,0,0,130,130,20,13,130,550,135,10,":/Recursos/SpriteGremlin.png");
+        Enemigo *enemigo = new Enemigo(lado,0,0,130,130,20,13,130,550,135,10,7,":/Recursos/SpriteGremlin.png");
 
         // Añadir el enemigo a la escena
         escenaNivel2->addItem(enemigo);
@@ -321,9 +321,6 @@ void MainWindow::iniciarNivel3()
 {
     quitarBotones();
 
-    bool Sala1 = true;  //La idea es alcanzar un logro o score en cada sala para desbloquear la siguiente
-    bool Sala2 = true;  //Con estos boleanos verifico si se logro el requisito para pasar a la siguiente sala
-
     fondoCambiado1 = false;
     fondoCambiado2 = false;
 
@@ -362,14 +359,14 @@ void MainWindow::iniciarNivel3()
 
 
         if (posicionHeroX >= 554) {
-            if(!fondoCambiado1 and !fondoCambiado2 and Sala1){
+            if(!fondoCambiado1 and !fondoCambiado2){
                 QImage background2(":/Recursos/Fondo2Nivel3.PNG");
                 escenaNivel3->setBackgroundBrush(QBrush(background2));
                 fondoCambiado1 = true; // Marcar que el fondo ha cambiad
                 fondoCambiado2 = false;
                 Homero->modificarPosX(-40);
             }
-            else if(fondoCambiado1 and Sala2){
+            else if(fondoCambiado1){
                 QImage background2(":/Recursos/Fondo3Nivel3.png");
                 escenaNivel3->setBackgroundBrush(QBrush(background2));
                 fondoCambiado2 = true; // Marcar que el fondo ha cambiad
@@ -397,9 +394,46 @@ void MainWindow::iniciarNivel3()
             }
 
         }
+
     });
 
     posHeroe->start(100);
+
+    if(!fondoCambiado1 and !fondoCambiado2){
+        añadirElementoGrafico(escenaNivel3, 0,-5,":/Recursos/corazon.png");
+        añadirElementoGrafico(escenaNivel3,300,0,":/Recursos/piedra.png");
+        añadirElementoGrafico(escenaNivel3,450,0,":/Recursos/ImagenGremlin.png");
+
+        // Temporizador para crear enemigos desde los bordes
+        QTimer *enemigoTimer = new QTimer(this);
+        connect(enemigoTimer, &QTimer::timeout, this, [=]() {
+            bool lado = (rand() % 2 == 0);
+            Enemigo *enemigo = new Enemigo(lado,0,0,150,160,20,10,0,600,440,20,8,":/Recursos/Enemigo2.png");
+
+            // Añadir el enemigo a la escena
+            escenaNivel3->addItem(enemigo);
+            connect(enemigo, &Enemigo::enemigoEliminado, Homero, &Heroe::aumentarScore);
+        });
+        enemigoTimer->start(4500);
+        timers.append(enemigoTimer);
+
+        // Temporizador para crear enemigos desde los bordes
+        QTimer *rataTimer = new QTimer(this);
+        connect(rataTimer, &QTimer::timeout, this, [=]() {
+            bool lado = (rand() % 2 == 0);
+            Enemigo *enemigoRata = new Enemigo(lado,0,0,125,100,10,9,525,5,":/Recursos/EnemigoRata.png");
+
+            // Añadir el enemigo a la escena
+            escenaNivel3->addItem(enemigoRata);
+        });
+        rataTimer->start(2500);
+        timers.append(rataTimer);
+    }
+
+    if(fondoCambiado1==true and fondoCambiado2==false){
+        qDebug()<<fondoCambiado1<<"  "<<fondoCambiado2;
+        detenerTimers();
+    }
 
 }
 
@@ -472,7 +506,7 @@ void MainWindow::iniciarSegundaParteNivel2(QGraphicsScene *escenaActual)
     Bart->setFocus();
 
     //Creacion Enemigos
-    Enemigo *enemigoMain = new Enemigo(300,0,130,130,130,30,27,":/Recursos/SpriteGremlin.png");
+    Enemigo *enemigoMain = new Enemigo(300,0,130,130,130,30,27,7,":/Recursos/SpriteGremlin.png");
         //(100,0,0,130,130,15,6,20,":/Recursos/SpriteGremlin.png");
     escenaActual->addItem(enemigoMain);
     enemigoMain->setPos(550,460);
