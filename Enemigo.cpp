@@ -66,6 +66,8 @@ Enemigo::Enemigo(int _SpriteX, int _SpriteY, int _spriteAncho, int _spriteAlto, 
     sprite = hojaSprites.copy(SpriteX,SpriteY,spriteAncho,spriteAlto);
     setPixmap(sprite);
 
+    setPos(-100,y());
+
     moveTimer = new QTimer(this);
     connect(moveTimer, &QTimer::timeout, this, &Enemigo::moverSenoidal);
     moveTimer->start(50);
@@ -91,6 +93,23 @@ Enemigo::Enemigo(int _vida, int _SpriteX, int _SpriteY, int _spriteAncho, int _s
     });
     activadorMovimiento->start(3800);
 
+}
+
+Enemigo::Enemigo(short randomX, int _SpriteX, int _SpriteY, int _spriteAncho, int _spriteAlto, int _daño, short _numSprites)
+        :Personaje(_SpriteX,_SpriteY,_spriteAncho,_spriteAlto)
+{
+    daño = _daño;
+    numSprites = _numSprites;
+
+    hojaSprites.load(":/Recursos/manos.png");
+    sprite = hojaSprites.copy(SpriteX,SpriteY,spriteAncho,spriteAlto);
+    setPixmap(sprite);
+
+    moveTimer = new QTimer(this);
+    connect(moveTimer, &QTimer::timeout, this, [=]() {
+        salirSuelo(randomX);
+    });
+    moveTimer->start(100);
 }
 
 void Enemigo::moverHaciaHeroe() {
@@ -182,7 +201,6 @@ void Enemigo::moverRapido()
             if (!colisionado) {
                 colisionado = true;
                 heroe->disminuirVida(daño);
-//                qDebug() << "Colisión con el héroe. Vida del héroe reducida en:" << daño;
                 break;
             }
         }
@@ -243,6 +261,33 @@ void Enemigo::mover()
     }
 }
 
+void Enemigo::salirSuelo(short randomX)
+{
+    setPos(randomX,420);
+
+    secuenciaSprite(0,numSprites);
+
+    QTimer *timerEliminar = new QTimer(this);
+    connect(timerEliminar, &QTimer::timeout, this, [=]() {
+        scene()->removeItem(this);
+        delete this;
+        qDebug()<<"Mano eliminada";
+    });
+    timerEliminar->start(1000);
+
+    QList<QGraphicsItem *> colisiones = collidingItems();
+    for (QGraphicsItem *item : colisiones) {
+        Heroe *heroe = dynamic_cast<Heroe *>(item);
+        if (heroe) {
+            if(!colisionado){
+                heroe->disminuirVida(daño);
+            }
+            colisionado = true;
+        }
+    }
+
+}
+
 
 void Enemigo::iniciarSalto() {
     Pisado = true;  // Activar indicador de desplazamiento
@@ -276,7 +321,5 @@ void Enemigo::saltoMuerte() {
     if (y() > 620) {
         scene()->removeItem(this);
         delete this;
-        qDebug() << "Enemigo Eliminado";
     }
 }
-
