@@ -12,7 +12,7 @@ class Enemigo : public Personaje
 public:
     Enemigo(bool lado, int _SpriteX, int _SpriteY, int _spriteAncho, int _spriteAlto, int _daño, int _velocidad,short int y,short int _numSprites, const QString &rutaSprite);
     Enemigo(bool lado, int _SpriteX, int _SpriteY, int _spriteAncho, int _spriteAlto, int _daño, int _velocidad, int x1, int x2, int y, int _vida,short int _numSprites, const QString &rutaSprite);
-    Enemigo(int _SpriteX, int _SpriteY, int _spriteAncho, int _spriteAlto, int _daño,short int _numSprites, const QString &rutaSprite);
+    Enemigo(int _vida,int _SpriteX, int _SpriteY, int _spriteAncho, int _spriteAlto, int _daño,short int _numSprites, const QString &rutaSprite);
     Enemigo(int _vida, int _SpriteX, int _SpriteY, int _spriteAncho, int _spriteAlto, int _daño, int _velocidad,short int _numSprites, const QString &rutaSprite);
     Enemigo(short int randomX,int _SpriteX, int _SpriteY, int _spriteAncho, int _spriteAlto, int _daño,short int _numSprites);
 
