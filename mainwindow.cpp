@@ -119,7 +119,7 @@ void MainWindow::iniciarNivel1()
 
     QTimer *enemigoVoladorTimer = new QTimer(this);
     connect(enemigoVoladorTimer, &QTimer::timeout, this, [=]() {
-        Enemigo *enemigoVolador = new Enemigo(0,0,146,50,20,6,":/Recursos/EnemigoVolador.png");
+        Enemigo *enemigoVolador = new Enemigo(1,0,0,146,50,20,6,":/Recursos/EnemigoVolador.png");
 
         // Añadir el enemigo a la escena
         escenaNivel1->addItem(enemigoVolador);
@@ -324,6 +324,9 @@ void MainWindow::iniciarNivel3()
     fondoCambiado1 = false;
     fondoCambiado2 = false;
 
+    sala1 = false;
+    sala2 = false;
+
     QGraphicsScene *escenaNivel3 = new QGraphicsScene(this);
 
     QImage background(":/Recursos/FondoNivel3.png");
@@ -341,7 +344,7 @@ void MainWindow::iniciarNivel3()
 
     QTimer *FlechasTimer = new QTimer(this);
     connect(FlechasTimer, &QTimer::timeout, this, [=]() {
-        Consumible *Flechas = new Consumible(":/Recursos/Flechas.png",10,15,10);
+        Consumible *Flechas = new Consumible(":/Recursos/Flechas.png",10,15,20);
 
         // Generar una posición aleatoria en el eje x (ajustando al ancho de la escena)
         int randomX = std::rand() % 540;
@@ -350,68 +353,49 @@ void MainWindow::iniciarNivel3()
         // Añadir la dona a la escena
         escenaNivel3->addItem(Flechas);
     });
+    FlechasTimer->start(25000);
+    timers.append(FlechasTimer);
 
-    FlechasTimer->start(10000);
+    QGraphicsRectItem *barraVidaRoja = nullptr;
+    QGraphicsRectItem *barraVidaAmarilla = nullptr;
+    añadirBarrasVida(escenaNivel3,50,10,barraVidaRoja,barraVidaAmarilla);
 
-    QTimer *posHeroe = new QTimer(this);
-    connect(posHeroe, &QTimer::timeout, this, [=]() {
-        qreal posicionHeroX = Homero->getPosX(); // Obtener posición X del héroe
+    añadirElementoGrafico(escenaNivel3, 0,-5,":/Recursos/corazon.png");
+    añadirElementoGrafico(escenaNivel3,300,0,":/Recursos/Flecha.png");
+    añadirElementoGrafico(escenaNivel3,450,0,":/Recursos/ImagenGremlin.png");
 
+    QGraphicsTextItem *VidaText = new QGraphicsTextItem();
+    VidaText->setDefaultTextColor(Qt::white);
+    VidaText->setFont(QFont("Algerian", 20));
+    VidaText->setPos(150,0);
+    escenaNivel3->addItem(VidaText);
 
-        if (posicionHeroX >= 554) {
-            if(!fondoCambiado1 and !fondoCambiado2){
-                QImage background2(":/Recursos/Fondo2Nivel3.PNG");
-                escenaNivel3->setBackgroundBrush(QBrush(background2));
-                fondoCambiado1 = true; // Marcar que el fondo ha cambiad
-                fondoCambiado2 = false;
-                Homero->modificarPosX(-40);
-            }
-            else if(fondoCambiado1){
-                QImage background2(":/Recursos/Fondo3Nivel3.png");
-                escenaNivel3->setBackgroundBrush(QBrush(background2));
-                fondoCambiado2 = true; // Marcar que el fondo ha cambiad
-                fondoCambiado1 = false;
-                Homero->modificarPosX(-40);
-            }
+    QGraphicsTextItem *MunicionText = new QGraphicsTextItem();
+    MunicionText->setDefaultTextColor(Qt::white);
+    MunicionText->setFont(QFont("Algerian", 20));
+    MunicionText->setPos(350,0);
+    escenaNivel3->addItem(MunicionText);
 
-        }
+    QGraphicsTextItem *ScoreActualText = new QGraphicsTextItem();
+    ScoreActualText->setDefaultTextColor(Qt::white);
+    ScoreActualText->setFont(QFont("Algerian", 20));
+    ScoreActualText->setPos(500,0);
+    escenaNivel3->addItem(ScoreActualText);
 
-        else if (posicionHeroX <= -54) {
-            if(fondoCambiado2){
-                QImage background2(":/Recursos/Fondo2Nivel3.PNG");
-                escenaNivel3->setBackgroundBrush(QBrush(background2));
-                fondoCambiado1 = true; // Marcar que el fondo ha cambiad
-                fondoCambiado2 = false;
-                Homero->setPos(550,450);
-                Homero->modificarPosX(550);
-            }
-            else if(fondoCambiado1){
-                escenaNivel3->setBackgroundBrush(QBrush(background));
-                fondoCambiado1 = false; // Revertir el cambio de fondo
-                fondoCambiado2 = false;
-                Homero->setPos(550,450);
-                Homero->modificarPosX(550);
-            }
-
-        }
-
-    });
-
-    posHeroe->start(100);
-
-
-    QTimer *enemigoTimer = new QTimer(this);  // Fuera del estadoActual
-    QTimer *rataTimer = new QTimer(this);    // Fuera del estadoActual
+    QTimer *enemigoTimer = new QTimer(this);
+    QTimer *rataTimer = new QTimer(this);
     QTimer *murcielagoTimer = new QTimer(this);
     QTimer *manoTimer = new QTimer(this);
 
     timers.append(enemigoTimer);
     timers.append(rataTimer);
     timers.append(murcielagoTimer);
+    timers.append(manoTimer);
+
 
     QTimer *estadoActual = new QTimer(this);
     connect(estadoActual, &QTimer::timeout, this, [=]() {
-        if (!fondoCambiado1 && !fondoCambiado2) {
+        if (!fondoCambiado1 && !fondoCambiado2 and !sala1) {
             if (!enemigoTimer->isActive()) { // Asegurar que solo se inicialicen una vez
                 connect(enemigoTimer, &QTimer::timeout, this, [=]() {
                     bool lado = (rand() % 2 == 0);
@@ -432,13 +416,12 @@ void MainWindow::iniciarNivel3()
             }
         }
 
-        if (fondoCambiado1 && !fondoCambiado2){
-            rataTimer->stop();
-            enemigoTimer->stop();
+        if (fondoCambiado1 && !fondoCambiado2 and !sala2){
             if(!murcielagoTimer->isActive()){
                 connect(murcielagoTimer, &QTimer::timeout, this, [=]() {
-                    Enemigo *murcielago = new Enemigo(0,0,146,50,20,6,":/Recursos/EnemigoVolador.png");
+                    Enemigo *murcielago = new Enemigo(20,0,0,146,50,20,6,":/Recursos/EnemigoVolador.png");
                     escenaNivel3->addItem(murcielago);
+                    connect(murcielago, &Enemigo::enemigoEliminado, Homero, &Heroe::aumentarScore);
                 });
                 murcielagoTimer->start(3500);
             }
@@ -454,10 +437,84 @@ void MainWindow::iniciarNivel3()
                 manoTimer->start(2000);
             }
 
-            //detenerTimers(); // Detiene todos los temporizadores cuando se cambia el fondo
         }
     });
     estadoActual->start(100);
+    timers.append(estadoActual);
+
+    QTimer *posHeroe = new QTimer(this);
+    connect(posHeroe, &QTimer::timeout, this, [=]() {
+        qreal posicionHeroX = Homero->getPosX();
+        unsigned short int vidaActual = Homero->getVida();
+        unsigned short int municionActual = Homero->getMunicion();
+        unsigned short int scoreActual = Homero->getScore();
+
+        mostrarVida(barraVidaAmarilla,vidaActual);
+
+        VidaText->setPlainText(QString("%1/100").arg(vidaActual));
+        MunicionText->setPlainText(QString("x%1").arg(municionActual));
+        ScoreActualText->setPlainText(QString("x%1").arg(scoreActual));
+
+        if(vidaActual==0){
+            detenerTimers();
+            escenaNivel3->clear();
+            mostrarGameOver(escenaNivel3);
+
+        }
+
+        if(scoreActual==25){
+            sala1 = true;
+            rataTimer->stop();
+            enemigoTimer->stop();
+        }
+
+        if(scoreActual==40){
+            sala2 = true;
+            murcielagoTimer->stop();
+            manoTimer->stop();
+        }
+
+        if (posicionHeroX >= 554) {
+            if(!fondoCambiado1 and !fondoCambiado2 and sala1){
+                QImage background2(":/Recursos/Fondo2Nivel3.PNG");
+                escenaNivel3->setBackgroundBrush(QBrush(background2));
+                fondoCambiado1 = true; // Marcar que el fondo ha cambiad
+                fondoCambiado2 = false;
+                Homero->modificarPosX(-40);
+            }
+
+            else if(fondoCambiado1 and sala2){
+                QImage background2(":/Recursos/Fondo3Nivel3.png");
+                escenaNivel3->setBackgroundBrush(QBrush(background2));
+                fondoCambiado2 = true; // Marcar que el fondo ha cambiad
+                fondoCambiado1 = false;
+                Homero->modificarPosX(-40);
+            }
+
+        }
+
+        else if (posicionHeroX <= -54) {
+            if(fondoCambiado2){
+                QImage background2(":/Recursos/Fondo2Nivel3.PNG");
+                escenaNivel3->setBackgroundBrush(QBrush(background2));
+                fondoCambiado1 = true; // Marcar que el fondo ha cambiad
+                fondoCambiado2 = false;
+                Homero->setPos(550,450);
+                Homero->modificarPosX(550);
+            }
+            else if(fondoCambiado1 and sala2){
+                escenaNivel3->setBackgroundBrush(QBrush(background));
+                fondoCambiado1 = false; // Revertir el cambio de fondo
+                fondoCambiado2 = false;
+                Homero->setPos(550,450);
+                Homero->modificarPosX(550);
+            }
+
+        }
+
+    });
+    posHeroe->start(100);
+    timers.append(posHeroe);
 }
 
 void MainWindow::MenuPrincipal()
@@ -629,6 +686,7 @@ void MainWindow::detenerTimers()
     for (QTimer *timer : timers) {
 
         timer->stop();
+
         delete timer;
     }
     timers.clear();
@@ -644,3 +702,5 @@ MainWindow::~MainWindow()
 {
     delete ui;
 }
+
+
