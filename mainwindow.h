@@ -55,6 +55,8 @@ private:
     //Para el nivel 3 - Control del flujo de las salas
     bool fondoCambiado1;
     bool fondoCambiado2;
+    bool sala1;
+    bool sala2;
 
     QList<QTimer*> timers;
 
