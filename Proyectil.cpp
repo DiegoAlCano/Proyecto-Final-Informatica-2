@@ -50,6 +50,26 @@ Proyectil::Proyectil(short _daño, double xInicial, double yInicial, short _dire
     timer->start(16);
 }
 
+void Proyectil::colisionEnemiga()
+{
+    QList<QGraphicsItem *> colisiones = collidingItems();
+    for (QGraphicsItem *item : colisiones) {
+        Enemigo *enemigo = dynamic_cast<Enemigo *>(item);
+        if (enemigo) {
+            enemigo->disminuirVida(daño);
+            if (enemigo->getVida() == 0) {
+                scene()->removeItem(enemigo);
+                delete enemigo;
+            }
+            // Eliminar el proyectil después de colisionar
+            timer->stop();
+            scene()->removeItem(this);
+            delete this;
+            return;
+        }
+    }
+}
+
 void Proyectil::movimientoParabolico() {
     double deltaT = 0.016;
 
@@ -60,16 +80,14 @@ void Proyectil::movimientoParabolico() {
     x += vx * deltaT * 50;
     y += vy * deltaT * 50;
 
-    // Detectar colisiones
-    QList<QGraphicsItem *> colisiones = collidingItems();
+    colisiones = collidingItems();
     for (QGraphicsItem *item : colisiones) {
         Enemigo *enemigo = dynamic_cast<Enemigo *>(item);
         if (enemigo) {
             enemigo->disminuirVida(daño);
-            if(enemigo->getVida()==0){
+            if (enemigo->getVida() == 0) {
                 scene()->removeItem(enemigo);
                 delete enemigo;
-
             }
             // Eliminar el proyectil después de colisionar
             timer->stop();
@@ -89,22 +107,21 @@ void Proyectil::movimientoParabolico() {
     }
 }
 
+
 void Proyectil::movimientoRectilineo()
 {
     x += (5.5*direccion);
 
     setPos(x,y);
 
-    // Detectar colisiones
-    QList<QGraphicsItem *> colisiones = collidingItems();
+    colisiones = collidingItems();
     for (QGraphicsItem *item : colisiones) {
         Enemigo *enemigo = dynamic_cast<Enemigo *>(item);
         if (enemigo) {
             enemigo->disminuirVida(daño);
-            if(enemigo->getVida()==0){
+            if (enemigo->getVida() == 0) {
                 scene()->removeItem(enemigo);
                 delete enemigo;
-
             }
             // Eliminar el proyectil después de colisionar
             timer->stop();
@@ -114,7 +131,7 @@ void Proyectil::movimientoRectilineo()
         }
     }
 
-    if (x < -30 || x > 670) {
+    if (x < -30 || x > 670){
         timer->stop();
         scene()->removeItem(this);
         delete this;
