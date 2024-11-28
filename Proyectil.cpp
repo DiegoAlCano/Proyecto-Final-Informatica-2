@@ -80,7 +80,7 @@ void Proyectil::movimientoParabolico() {
     x += vx * deltaT * 50;
     y += vy * deltaT * 50;
 
-    colisiones = collidingItems();
+    QList<QGraphicsItem *> colisiones = collidingItems();
     for (QGraphicsItem *item : colisiones) {
         Enemigo *enemigo = dynamic_cast<Enemigo *>(item);
         if (enemigo) {
@@ -114,7 +114,7 @@ void Proyectil::movimientoRectilineo()
 
     setPos(x,y);
 
-    colisiones = collidingItems();
+    QList<QGraphicsItem *> colisiones = collidingItems();
     for (QGraphicsItem *item : colisiones) {
         Enemigo *enemigo = dynamic_cast<Enemigo *>(item);
         if (enemigo) {
