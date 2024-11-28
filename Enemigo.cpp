@@ -56,11 +56,12 @@ Enemigo::Enemigo(bool lado, int _SpriteX, int _SpriteY, int _spriteAncho, int _s
 }
 
 
-Enemigo::Enemigo(int _SpriteX, int _SpriteY, int _spriteAncho, int _spriteAlto, int _daño, short _numSprites, const QString &rutaSprite)
+Enemigo::Enemigo(int _vida,int _SpriteX, int _SpriteY, int _spriteAncho, int _spriteAlto, int _daño, short _numSprites, const QString &rutaSprite)
     :Personaje(_SpriteX,_SpriteY,_spriteAncho,_spriteAlto)
 {
     daño = _daño;
     numSprites = _numSprites;
+    vida = _vida;
 
     hojaSprites.load(rutaSprite);
     sprite = hojaSprites.copy(SpriteX,SpriteY,spriteAncho,spriteAlto);
@@ -271,7 +272,6 @@ void Enemigo::salirSuelo(short randomX)
     connect(timerEliminar, &QTimer::timeout, this, [=]() {
         scene()->removeItem(this);
         delete this;
-        qDebug()<<"Mano eliminada";
     });
     timerEliminar->start(1000);
 
@@ -305,21 +305,5 @@ void Enemigo::disminuirVida(int cantidadVida)
     if(vida<=0){
         vida = 0;
         emit enemigoEliminado(1);
-    }
-}
-
-unsigned short Enemigo::getVida()
-{
-    return vida;
-}
-
-void Enemigo::saltoMuerte() {
-    velocidadY += 2;  // Aumentar la velocidadY para simular la gravedad
-    setPos(x(), y() + velocidadY);
-
-    // Si el enemigo sale de la pantalla, se elimina
-    if (y() > 620) {
-        scene()->removeItem(this);
-        delete this;
     }
 }
