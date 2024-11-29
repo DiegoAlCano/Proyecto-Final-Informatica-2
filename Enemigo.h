@@ -10,11 +10,11 @@ class Enemigo : public Personaje
 {
     Q_OBJECT
 public:
-    Enemigo(bool lado, int _SpriteX, int _SpriteY, int _spriteAncho, int _spriteAlto, int _daño, int _velocidad,short int y,short int _numSprites, const QString &rutaSprite);
-    Enemigo(bool lado, int _SpriteX, int _SpriteY, int _spriteAncho, int _spriteAlto, int _daño, int _velocidad, int x1, int x2, int y, int _vida,short int _numSprites, const QString &rutaSprite);
-    Enemigo(int _vida,int _SpriteX, int _SpriteY, int _spriteAncho, int _spriteAlto, int _daño,short int _numSprites, const QString &rutaSprite);
-    Enemigo(int _vida, int _SpriteX, int _SpriteY, int _spriteAncho, int _spriteAlto, int _daño, int _velocidad,short int _numSprites, const QString &rutaSprite);
-    Enemigo(short int randomX,int _SpriteX, int _SpriteY, int _spriteAncho, int _spriteAlto, int _daño,short int _numSprites);
+    Enemigo(bool lado, int _SpriteX, int _SpriteY, int _spriteAncho, int _spriteAlto,unsigned short int _daño,short int _velocidad,short int y,short int _numSprites, const QString &rutaSprite);
+    Enemigo(bool lado, int _SpriteX, int _SpriteY, int _spriteAncho, int _spriteAlto, unsigned short int _daño, short int _velocidad,short int x1,short int x2,short int y, unsigned short int _vida,short int _numSprites, const QString &rutaSprite);
+    Enemigo(unsigned short int _vida,int _SpriteX, int _SpriteY, int _spriteAncho, int _spriteAlto,unsigned short int  _daño,short int _numSprites, const QString &rutaSprite);
+    Enemigo(unsigned short int _vida, int _SpriteX, int _SpriteY, int _spriteAncho, int _spriteAlto, unsigned short int _daño, short int _velocidad,short int _numSprites, const QString &rutaSprite);
+    Enemigo(short int randomX,int _SpriteX, int _SpriteY, int _spriteAncho, int _spriteAlto, unsigned short int _daño,short int _numSprites);
 
     void moverHaciaHeroe();
     void moverSenoidal();
@@ -31,9 +31,9 @@ private:
 
     QTimer *moveTimer;
 
-    int velocidad;
-    int daño;
-    int vida;
+    short int velocidad;
+    unsigned short int daño;
+    unsigned short int vida;
     short int numSprites;
 
     bool Pisado = false;
