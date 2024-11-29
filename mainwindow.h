@@ -32,7 +32,7 @@ public:
     void mostrarVictoria(QGraphicsScene *escenaActual);
     void mostrarVida(QGraphicsRectItem *barraVidaAmarilla, int vida);
     void iniciarSegundaParteNivel2(QGraphicsScene *escenaActual);
-    void añadirElementoGrafico(QGraphicsScene *escenaActual, int posX, int posY, const QString &rutaImagen);
+    void añadirElementoGrafico(QGraphicsScene *escenaActual, int posX, int posY, int scaleX, int scaleY, const QString &rutaImagen);
     void añadirBarrasVida(QGraphicsScene *escenaActual, int posX, int posY, QGraphicsRectItem *&barraVidaRoja, QGraphicsRectItem *&barraVidaAmarilla);
     void detenerTimers();
 
