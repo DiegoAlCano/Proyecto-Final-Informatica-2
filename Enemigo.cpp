@@ -4,7 +4,7 @@
 #include "QDebug"
 #include <cmath>
 
-Enemigo::Enemigo(bool lado, int _SpriteX, int _SpriteY, int _spriteAncho, int _spriteAlto, int _daño, int _velocidad, short y, short _numSprites, const QString &rutaSprite)
+Enemigo::Enemigo(bool lado, int _SpriteX, int _SpriteY, int _spriteAncho, int _spriteAlto, unsigned short _daño, short _velocidad, short y, short _numSprites, const QString &rutaSprite)
     :Personaje(_SpriteX,_SpriteY,_spriteAncho,_spriteAlto)
 {
     daño = _daño;
@@ -30,7 +30,7 @@ Enemigo::Enemigo(bool lado, int _SpriteX, int _SpriteY, int _spriteAncho, int _s
 }
 
 
-Enemigo::Enemigo(bool lado, int _SpriteX, int _SpriteY, int _spriteAncho, int _spriteAlto, int _daño, int _velocidad, int x1, int x2, int y, int _vida, short _numSprites, const QString &rutaSprite)
+Enemigo::Enemigo(bool lado, int _SpriteX, int _SpriteY, int _spriteAncho, int _spriteAlto, unsigned short _daño, short _velocidad, short x1, short x2, short y, unsigned short _vida, short _numSprites, const QString &rutaSprite)
     :Personaje(_SpriteX,_SpriteY,_spriteAncho,_spriteAlto)
 {
     daño = _daño;
@@ -56,7 +56,7 @@ Enemigo::Enemigo(bool lado, int _SpriteX, int _SpriteY, int _spriteAncho, int _s
 }
 
 
-Enemigo::Enemigo(int _vida,int _SpriteX, int _SpriteY, int _spriteAncho, int _spriteAlto, int _daño, short _numSprites, const QString &rutaSprite)
+Enemigo::Enemigo(unsigned short _vida,int _SpriteX, int _SpriteY, int _spriteAncho, int _spriteAlto, unsigned short _daño, short _numSprites, const QString &rutaSprite)
     :Personaje(_SpriteX,_SpriteY,_spriteAncho,_spriteAlto)
 {
     daño = _daño;
@@ -75,7 +75,7 @@ Enemigo::Enemigo(int _vida,int _SpriteX, int _SpriteY, int _spriteAncho, int _sp
 
 }
 
-Enemigo::Enemigo(int _vida, int _SpriteX, int _SpriteY, int _spriteAncho, int _spriteAlto, int _daño, int _velocidad, short _numSprites, const QString &rutaSprite)
+Enemigo::Enemigo(unsigned short _vida, int _SpriteX, int _SpriteY, int _spriteAncho, int _spriteAlto, unsigned short _daño, short _velocidad, short _numSprites, const QString &rutaSprite)
         :Personaje(_SpriteX,_SpriteY,_spriteAncho,_spriteAlto)
 {
     daño = _daño;
@@ -96,7 +96,7 @@ Enemigo::Enemigo(int _vida, int _SpriteX, int _SpriteY, int _spriteAncho, int _s
 
 }
 
-Enemigo::Enemigo(short randomX, int _SpriteX, int _SpriteY, int _spriteAncho, int _spriteAlto, int _daño, short _numSprites)
+Enemigo::Enemigo(short randomX, int _SpriteX, int _SpriteY, int _spriteAncho, int _spriteAlto, unsigned short _daño, short _numSprites)
         :Personaje(_SpriteX,_SpriteY,_spriteAncho,_spriteAlto)
 {
     daño = _daño;
@@ -305,5 +305,21 @@ void Enemigo::disminuirVida(int cantidadVida)
     if(vida<=0){
         vida = 0;
         emit enemigoEliminado(1);
+    }
+}
+
+unsigned short Enemigo::getVida()
+{
+    return vida;
+}
+
+void Enemigo::saltoMuerte() {
+    velocidadY += 2;  // Aumentar la velocidadY para simular la gravedad
+    setPos(x(), y() + velocidadY);
+
+    // Si el enemigo sale de la pantalla, se elimina
+    if (y() > 620) {
+        scene()->removeItem(this);
+        delete this;
     }
 }
