@@ -138,9 +138,9 @@ void MainWindow::iniciarNivel1()
     QGraphicsRectItem *barraVidaAmarilla = nullptr;
     añadirBarrasVida(escenaNivel1,50,10,barraVidaRoja,barraVidaAmarilla);
 
-    añadirElementoGrafico(escenaNivel1,320,-5,":/Recursos/Dona.png");
-    añadirElementoGrafico(escenaNivel1,0,-5,":/Recursos/corazon.png");
-    añadirElementoGrafico(escenaNivel1,480,-5,":/Recursos/Reloj.png");
+    añadirElementoGrafico(escenaNivel1,320,-5,45,45,":/Recursos/Dona.png");
+    añadirElementoGrafico(escenaNivel1,0,-5,45,45,":/Recursos/corazon.png");
+    añadirElementoGrafico(escenaNivel1,480,-5,45,45,":/Recursos/Reloj.png");
 //-----------------------------------------------------------------------------------------------------------------------
 
     //ELEMENTOS DE TEXTO
@@ -263,9 +263,9 @@ void MainWindow::iniciarNivel2()
     QGraphicsRectItem *barraVidaAmarilla = nullptr;
     añadirBarrasVida(escenaNivel2,50,10,barraVidaRoja,barraVidaAmarilla);
 
-    añadirElementoGrafico(escenaNivel2, 0,-5,":/Recursos/corazon.png");
-    añadirElementoGrafico(escenaNivel2,300,0,":/Recursos/piedra.png");
-    añadirElementoGrafico(escenaNivel2,450,0,":/Recursos/ImagenGremlin.png");
+    añadirElementoGrafico(escenaNivel2, 0,-5,45,45,":/Recursos/corazon.png");
+    añadirElementoGrafico(escenaNivel2,300,0,45,45,":/Recursos/piedra.png");
+    añadirElementoGrafico(escenaNivel2,450,0,45,45,":/Recursos/ImagenGremlin.png");
 
     QGraphicsTextItem *VidaText = new QGraphicsTextItem();
     VidaText->setDefaultTextColor(Qt::white);
@@ -360,9 +360,9 @@ void MainWindow::iniciarNivel3()
     QGraphicsRectItem *barraVidaAmarilla = nullptr;
     añadirBarrasVida(escenaNivel3,50,10,barraVidaRoja,barraVidaAmarilla);
 
-    añadirElementoGrafico(escenaNivel3, 0,-5,":/Recursos/corazon.png");
-    añadirElementoGrafico(escenaNivel3,300,0,":/Recursos/Flecha.png");
-    añadirElementoGrafico(escenaNivel3,450,0,":/Recursos/ImagenGremlin.png");
+    añadirElementoGrafico(escenaNivel3, 0,-5,45,45,":/Recursos/corazon.png");
+    añadirElementoGrafico(escenaNivel3,280,-13,90,90,":/Recursos/Flecha.png");
+    añadirElementoGrafico(escenaNivel3,450,0,45,45,":/Recursos/ImagenGremlin.png");
 
     QGraphicsTextItem *VidaText = new QGraphicsTextItem();
     VidaText->setDefaultTextColor(Qt::white);
@@ -606,9 +606,9 @@ void MainWindow::iniciarSegundaParteNivel2(QGraphicsScene *escenaActual)
     QGraphicsRectItem *barraVidaAmarilla = nullptr;
     añadirBarrasVida(escenaActual,50,10,barraVidaRoja,barraVidaAmarilla);
 
-    añadirElementoGrafico(escenaActual, 0,-5,":/Recursos/corazon.png");
-    añadirElementoGrafico(escenaActual,300,0,":/Recursos/piedra.png");
-    añadirElementoGrafico(escenaActual,450,0,":/Recursos/ImagenGremlin.png");
+    añadirElementoGrafico(escenaActual, 0,-5,45,45,":/Recursos/corazon.png");
+    añadirElementoGrafico(escenaActual,300,0,45,45,":/Recursos/piedra.png");
+    añadirElementoGrafico(escenaActual,450,0,45,45,":/Recursos/ImagenGremlin.png");
 
     QGraphicsTextItem *VidaText = new QGraphicsTextItem();
     VidaText->setDefaultTextColor(Qt::white);
@@ -659,12 +659,12 @@ void MainWindow::iniciarSegundaParteNivel2(QGraphicsScene *escenaActual)
     timers.append(actualizarInfo);
 }
 
-void MainWindow::añadirElementoGrafico(QGraphicsScene *escenaActual, int posX,int posY, const QString &rutaImagen)
+void MainWindow::añadirElementoGrafico(QGraphicsScene *escenaActual, int posX,int posY,int scaleX, int scaleY, const QString &rutaImagen)
 {
     QPixmap imagen(rutaImagen);
-    QPixmap imagenRedimensionada = imagen.scaled(45,45,Qt::KeepAspectRatio);
+    QPixmap imagenRedimensionada = imagen.scaled(scaleX,scaleY,Qt::KeepAspectRatio);
     QGraphicsPixmapItem *itemImagen = new QGraphicsPixmapItem(imagenRedimensionada);
-    itemImagen->setPos(posX, posY); // Posición en la escena
+    itemImagen->setPos(posX, posY);
     escenaActual->addItem(itemImagen);
 }
 
@@ -702,5 +702,4 @@ MainWindow::~MainWindow()
 {
     delete ui;
 }
-
 
