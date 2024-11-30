@@ -1,55 +1,52 @@
-#ifndef HEROE_H
-#define HEROE_H
+#ifndef ENEMIGO_H
+#define ENEMIGO_H
 
+#include "Heroe.h"
 #include "Personaje.h"
-#include "QKeyEvent"
-#include "mainwindow.h"
-#include "QGraphicsTextItem"
+#include <QTimer>
+#include "Proyectil.h"
 
-class Heroe : public Personaje
+class Enemigo : public Personaje
 {
     Q_OBJECT
 public:
-    Heroe(char _nivel,qreal _y,int _SpriteX, int _SpriteY, int _spriteAncho, int _spriteAlto, int _vida, int _municion, const QString &rutaSprite);
-    void keyPressEvent(QKeyEvent *event) override;
-    void movimiento(int dx, int dy);
-    void aumentarVida(int cantidadVida);
-    void aumentarMunicion(int cantidadMunicion);
+    Enemigo(bool lado, int _SpriteX, int _SpriteY, int _spriteAncho, int _spriteAlto,unsigned short int _daño,short int _velocidad,short int y,short int _numSprites, const QString &rutaSprite);
+    Enemigo(bool lado, int _SpriteX, int _SpriteY, int _spriteAncho, int _spriteAlto, unsigned short int _daño, short int _velocidad,short int x1,short int x2,short int y, unsigned short int _vida,short int _numSprites, const QString &rutaSprite);
+    Enemigo(unsigned short int _vida,int _SpriteX, int _SpriteY, int _spriteAncho, int _spriteAlto,unsigned short int  _daño,short int _numSprites, const QString &rutaSprite);
+    Enemigo(unsigned short int _vida, int _SpriteX, int _SpriteY, int _spriteAncho, int _spriteAlto, unsigned short int _daño, short int _velocidad,short int _numSprites, const QString &rutaSprite);
+    Enemigo(short int randomX,int _SpriteX, int _SpriteY, int _spriteAncho, int _spriteAlto, unsigned short int _daño,short int _numSprites);
+
+    void moverHaciaHeroe();
+    void moverSenoidal();
+    void moverRapido();
+    void mover();
+    void salirSuelo(short int randomX);
+    void iniciarSalto();
     void disminuirVida(int cantidadVida);
-    void disminuirMunicion();
-    void aumentarScore(int aumentoScore);
-    void disparar(int direccion);
-    void modificarPosX(qreal newX);
 
-    short int getVida();
-    bool get_enCaida();
-    unsigned short int getScore();
-    unsigned short int getMunicion();
-    qreal getPosX();
-    void setNivel(char _Nivel);
+    unsigned short int getVida();
 
-private slots:
-    void actualizarSalto();
 
 private:
 
-    //posicion
-    qreal x = 0;
-    qreal y = 0;
+    QTimer *moveTimer;
 
-    //Especificaciones
-    short int vida;
-    unsigned short int municion;
-    unsigned short int score=0;
+    short int velocidad;
+    unsigned short int daño;
+    unsigned short int vida;
+    short int numSprites;
 
-    //atributos para el salto
-    qreal velocidadY = 0;
-    qreal velocidadX;
-    short int direccionHeroe;
-    bool enElAire = false;
-    bool enCaida = false;
-    QTimer *saltoTimer;    // Temporizador para controlar el salto
+    bool Pisado = false;
+    bool colisionado = false;
 
-    char nivel; //Atributo para controlar cualidades del movimiento y disparo del heroe
+    qreal velocidadY;
 
+private slots:
+    void iniciarMovimiento();
+    void saltoMuerte();
+
+signals:
+    void enemigoEliminado(short int puntos);
 };
+
+#endif // ENEMIGO_H
