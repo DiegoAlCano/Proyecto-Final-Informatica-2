@@ -82,6 +82,17 @@ void Heroe::keyPressEvent(QKeyEvent *event) {
                     scene()->addItem(proyectil);
                 }
             }
+            else if(nivel=='4'){
+                if(direccionHeroe==1){
+                    Proyectil *proyectil = new Proyectil('4',10,x+90,y+42,direccionHeroe);
+                    scene()->addItem(proyectil);
+                }
+                else{
+                    Proyectil *proyectil = new Proyectil('4',10,x-20,y+42,direccionHeroe);
+                    scene()->addItem(proyectil);
+                }
+            }
+
         }
 
         break;
@@ -102,7 +113,7 @@ void Heroe::actualizarSalto() {
         enCaida = true;
     }
 
-    if(nivel=='1' or nivel=='3'){
+    if(nivel=='1' or nivel=='3' or nivel == '4'){
         // Limita las posiciones
         if (x > 555) {
             x = 555;
@@ -163,7 +174,7 @@ void Heroe::actualizarSalto() {
 
 void Heroe::movimiento(int dx, int dy) {
 
-    if(nivel=='1' or nivel=='3'){
+    if(nivel=='1' or nivel=='3' or nivel== '4'){
         if (x > 555) {
             x = 555;
         }
@@ -264,6 +275,10 @@ qreal Heroe::getPosX()
     return x;
 }
 
+void Heroe::setNivel(char _Nivel)
+{
+    nivel = _Nivel;
+}
 
 void Heroe::disparar(int direccion)
 {
@@ -284,10 +299,3 @@ void Heroe::modificarPosX(qreal newX)
     x = newX;
 }
 
-qreal obtenerPosY(const Heroe &heroe) {
-    return heroe.y;
-}
-
-bool obtenerenElAire(const Heroe &heroe){
-    return heroe.enElAire;
-}
