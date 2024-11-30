@@ -74,7 +74,7 @@ void MainWindow::iniciarNivel1()
     vista->resize(background.width()+20,background.height()+20);
 
     //Creacion de Personajes y consumibles
-//-----------------------------------------------------------------------------------------------------------------------
+    //-----------------------------------------------------------------------------------------------------------------------
     Heroe *Homero = new Heroe('1',450,0,0,150,160,100,0,":/Recursos/SpritesHomero.png");
     escenaNivel1->addItem(Homero);
     Homero->setPos(0,450);
@@ -128,11 +128,11 @@ void MainWindow::iniciarNivel1()
     enemigoVoladorTimer->start(10000);
     timers.append(enemigoVoladorTimer);
 
-//-----------------------------------------------------------------------------------------------------------------------
+    //-----------------------------------------------------------------------------------------------------------------------
 
     //ELEMENTOS GRAFICOS
 
-//-----------------------------------------------------------------------------------------------------------------------
+    //-----------------------------------------------------------------------------------------------------------------------
     //Barras de Vida
     QGraphicsRectItem *barraVidaRoja = nullptr;
     QGraphicsRectItem *barraVidaAmarilla = nullptr;
@@ -141,11 +141,11 @@ void MainWindow::iniciarNivel1()
     añadirElementoGrafico(escenaNivel1,320,-5,45,45,":/Recursos/Dona.png");
     añadirElementoGrafico(escenaNivel1,0,-5,45,45,":/Recursos/corazon.png");
     añadirElementoGrafico(escenaNivel1,480,-5,45,45,":/Recursos/Reloj.png");
-//-----------------------------------------------------------------------------------------------------------------------
+    //-----------------------------------------------------------------------------------------------------------------------
 
     //ELEMENTOS DE TEXTO
 
-//-----------------------------------------------------------------------------------------------------------------------
+    //-----------------------------------------------------------------------------------------------------------------------
     // Mostrar y actualizar el tiempo transcurrido
     QGraphicsTextItem *tiempoText = new QGraphicsTextItem();
     tiempoText->setDefaultTextColor(Qt::white);
@@ -220,7 +220,7 @@ void MainWindow::iniciarNivel1()
     });
     actualizarInfo->start(100);
     timers.append(actualizarInfo);
-//-----------------------------------------------------------------------------------------------------------------------
+    //-----------------------------------------------------------------------------------------------------------------------
 
 }
 
@@ -238,6 +238,8 @@ void MainWindow::iniciarNivel2()
     vista->setScene(escenaNivel2);
     vista->resize(background.width()+20,background.height()+20);
 
+    //Creacion de Personaje y Enemigos
+    //--------------------------------------------------------------------------------------------------------------
     Heroe *Bart = new Heroe('2',130,0,0,150,160,100,15,":/Recursos/SpritesBart.png");
     escenaNivel2->addItem(Bart);
     Bart->setPos(100,130);
@@ -258,7 +260,8 @@ void MainWindow::iniciarNivel2()
     enemigoTimer->start(2000);
     timers.append(enemigoTimer);
 
-
+    //Creacion de elementos Graficos
+    //-------------------------------------------------------------------------------------------------------------
     QGraphicsRectItem *barraVidaRoja = nullptr;
     QGraphicsRectItem *barraVidaAmarilla = nullptr;
     añadirBarrasVida(escenaNivel2,50,10,barraVidaRoja,barraVidaAmarilla);
@@ -267,6 +270,8 @@ void MainWindow::iniciarNivel2()
     añadirElementoGrafico(escenaNivel2,300,0,45,45,":/Recursos/piedra.png");
     añadirElementoGrafico(escenaNivel2,450,0,45,45,":/Recursos/ImagenGremlin.png");
 
+    //Creacion de elementos de texto
+    //------------------------------------------------------------------------------------------------------------
     QGraphicsTextItem *VidaText = new QGraphicsTextItem();
     VidaText->setDefaultTextColor(Qt::white);
     VidaText->setFont(QFont("Algerian", 20));
@@ -285,6 +290,8 @@ void MainWindow::iniciarNivel2()
     ScoreActualText->setPos(500,0);
     escenaNivel2->addItem(ScoreActualText);
 
+    //Actualizacion de estado del nivel
+    //-------------------------------------------------------------------------------------------------------------
     QTimer *actualizarInfo = new QTimer(this);
     connect(actualizarInfo, &QTimer::timeout, this, [=](){
         unsigned short int vidaActual = Bart->getVida();
@@ -336,6 +343,8 @@ void MainWindow::iniciarNivel3()
     vista->setScene(escenaNivel3);
     vista->resize(background.width() + 20, background.height() + 20);
 
+    //Creacion de Personaje y consumibles
+    //-------------------------------------------------------------------------------------------------------------
     Heroe *Homero = new Heroe('3',450,0, 0, 150, 160, 100, 12, ":/Recursos/SpritesHomero.png");
     escenaNivel3->addItem(Homero);
     Homero->setPos(0, 450);
@@ -356,14 +365,18 @@ void MainWindow::iniciarNivel3()
     FlechasTimer->start(25000);
     timers.append(FlechasTimer);
 
+    //Creacion de elementos Graficos
+    //-------------------------------------------------------------------------------------------------------------
     QGraphicsRectItem *barraVidaRoja = nullptr;
     QGraphicsRectItem *barraVidaAmarilla = nullptr;
     añadirBarrasVida(escenaNivel3,50,10,barraVidaRoja,barraVidaAmarilla);
 
     añadirElementoGrafico(escenaNivel3, 0,-5,45,45,":/Recursos/corazon.png");
     añadirElementoGrafico(escenaNivel3,280,-13,90,90,":/Recursos/Flecha.png");
-    añadirElementoGrafico(escenaNivel3,450,0,45,45,":/Recursos/ImagenGremlin.png");
+    añadirElementoGrafico(escenaNivel3,450,-5,60,60,":/Recursos/Calavera.png");
 
+    //Creacion de Elementos de texto
+    //-------------------------------------------------------------------------------------------------------------
     QGraphicsTextItem *VidaText = new QGraphicsTextItem();
     VidaText->setDefaultTextColor(Qt::white);
     VidaText->setFont(QFont("Algerian", 20));
@@ -382,17 +395,26 @@ void MainWindow::iniciarNivel3()
     ScoreActualText->setPos(500,0);
     escenaNivel3->addItem(ScoreActualText);
 
+    //Creacion de Timers para la aparicion de enemigos
+    //-------------------------------------------------------------------------------------------------------------
     QTimer *enemigoTimer = new QTimer(this);
     QTimer *rataTimer = new QTimer(this);
     QTimer *murcielagoTimer = new QTimer(this);
     QTimer *manoTimer = new QTimer(this);
+    QTimer *zombieTimer = new QTimer(this);
+    QTimer *DraculaTimer = new QTimer(this);
 
+    //Se gregan los timers a la lista de timers
     timers.append(enemigoTimer);
     timers.append(rataTimer);
     timers.append(murcielagoTimer);
     timers.append(manoTimer);
+    timers.append(zombieTimer);
+    timers.append(DraculaTimer);
+    //-------------------------------------------------------------------------------------------------------------
 
-
+    //Creacion de enemigos segun la sala y estado actual del nivel
+    //-------------------------------------------------------------------------------------------------------------
     QTimer *estadoActual = new QTimer(this);
     connect(estadoActual, &QTimer::timeout, this, [=]() {
         if (!fondoCambiado1 && !fondoCambiado2 and !sala1) {
@@ -438,10 +460,30 @@ void MainWindow::iniciarNivel3()
             }
 
         }
+        if (!fondoCambiado1 && fondoCambiado2 and sala2){
+
+            if (!zombieTimer->isActive()) { // Asegurar que solo se inicialicen una vez
+                connect(zombieTimer, &QTimer::timeout, this, [=]() {
+                    bool lado = (rand() % 2 == 0);
+                    Enemigo *zombie = new Enemigo(lado, 0, 0, 150, 160, 20, 7, 0, 550, 420, 20, 8, ":/Recursos/zombie.png");
+                    zombie->setScale(1.25);
+                    escenaNivel3->addItem(zombie);
+                    connect(zombie, &Enemigo::enemigoEliminado, Homero, &Heroe::aumentarScore);
+                });
+                zombieTimer->start(3500);
+            }
+            Homero->setNivel('4');
+        }
+
+
     });
+
     estadoActual->start(100);
     timers.append(estadoActual);
+    //-------------------------------------------------------------------------------------------------------------
 
+    //Verificacion de la posicion actual del heroe e informacion relacionada
+    //-------------------------------------------------------------------------------------------------------------
     QTimer *posHeroe = new QTimer(this);
     connect(posHeroe, &QTimer::timeout, this, [=]() {
         qreal posicionHeroX = Homero->getPosX();
@@ -462,17 +504,56 @@ void MainWindow::iniciarNivel3()
 
         }
 
-        if(scoreActual==25){
+        if(scoreActual==1){
             sala1 = true;
             rataTimer->stop();
             enemigoTimer->stop();
         }
 
-        if(scoreActual==40){
+        if(scoreActual==1){
             sala2 = true;
             murcielagoTimer->stop();
             manoTimer->stop();
         }
+        bool inicialDracula = false;
+        if(scoreActual == 3){
+            zombieTimer->stop();
+            inicialDracula = true;
+
+        }
+        static bool DraculaCreado = false;
+        if(inicialDracula){
+            if (!DraculaTimer->isActive() && !DraculaCreado) {  // Asegurar que solo se cree una vez
+                connect(DraculaTimer, &QTimer::timeout, this, [=]() {
+                    Enemigo *Dracula = new Enemigo(300,0,130,150,160,30,2,8,":/Recursos/Dracula.png");
+                    escenaNivel3->addItem(Dracula);
+                    Dracula->setPos(550,400);
+                    Dracula->setScale(1.25);
+                    connect(Dracula, &Enemigo::enemigoEliminado, Homero, &Heroe::aumentarScore);
+
+                    // Establecer Dracula a true para evitar crear más Draculas
+                    DraculaCreado = true;
+                });
+                DraculaTimer->start(3500);
+            }
+            if (!manoTimer->isActive()) {
+                connect(manoTimer, &QTimer::timeout, this, [=]() {
+                    // Generar un número aleatorio entre -50 y 550
+                    int randomX = (std::rand() % 601) - 50; // 601 = 550 - (-50) + 1
+
+                    Enemigo *mano = new Enemigo(randomX, 0, 0, 100, 200, 10, 11);
+                    escenaNivel3->addItem(mano);
+                });
+                manoTimer->start(4500);
+            }
+
+
+
+        }
+        if(DraculaCreado){
+            DraculaTimer->stop();
+        }
+
 
         if (posicionHeroX >= 554) {
             if(!fondoCambiado1 and !fondoCambiado2 and sala1){
@@ -515,6 +596,7 @@ void MainWindow::iniciarNivel3()
     });
     posHeroe->start(100);
     timers.append(posHeroe);
+    //-------------------------------------------------------------------------------------------------------------
 }
 
 void MainWindow::MenuPrincipal()
@@ -587,7 +669,6 @@ void MainWindow::iniciarSegundaParteNivel2(QGraphicsScene *escenaActual)
 
     //Creacion Enemigos
     Enemigo *enemigoMain = new Enemigo(300,0,130,130,130,30,27,7,":/Recursos/SpriteGremlin.png");
-        //(100,0,0,130,130,15,6,20,":/Recursos/SpriteGremlin.png");
     escenaActual->addItem(enemigoMain);
     enemigoMain->setPos(550,460);
 
@@ -702,4 +783,3 @@ MainWindow::~MainWindow()
 {
     delete ui;
 }
-
