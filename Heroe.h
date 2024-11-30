@@ -12,7 +12,7 @@ class Heroe : public Personaje
 public:
     Heroe(char _nivel,qreal _y,int _SpriteX, int _SpriteY, int _spriteAncho, int _spriteAlto, int _vida, int _municion, const QString &rutaSprite);
     void keyPressEvent(QKeyEvent *event) override;
-    void movimiento(int dx, int dy, char nivel);
+    void movimiento(int dx, int dy);
     void aumentarVida(int cantidadVida);
     void aumentarMunicion(int cantidadMunicion);
     void disminuirVida(int cantidadVida);
@@ -26,8 +26,7 @@ public:
     unsigned short int getScore();
     unsigned short int getMunicion();
     qreal getPosX();
-    friend qreal obtenerPosY(const Heroe &heroe);
-    friend bool obtenerenElAire(const Heroe &heroe);
+    void setNivel(char _Nivel);
 
 private slots:
     void actualizarSalto();
@@ -52,7 +51,6 @@ private:
     QTimer *saltoTimer;    // Temporizador para controlar el salto
 
     char nivel; //Atributo para controlar cualidades del movimiento y disparo del heroe
-
 
 };
 
