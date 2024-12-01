@@ -8,15 +8,15 @@ class Personaje : public QObject, public QGraphicsPixmapItem
 {
     Q_OBJECT
 public:
-    Personaje(int _SpriteX, int _SpriteY, int _spriteAncho, int _spriteAlto);
-    void secuenciaSprite(int direccion,int maxContador);
+    Personaje(unsigned short int _SpriteX, unsigned short int _SpriteY, unsigned short int _spriteAncho, unsigned short int _spriteAlto);
+    void secuenciaSprite(short int direccion,unsigned short int maxContador);
 
 protected:
-    int SpriteX;
-    int SpriteY;
-    int spriteAncho;
-    int spriteAlto;
-    int contador = 0;
+    unsigned short int SpriteX;
+    unsigned short int SpriteY;
+    unsigned short int spriteAncho;
+    unsigned short int spriteAlto;
+    unsigned short int contador = 0;
     QPixmap hojaSprites;
     QPixmap sprite;
 };
