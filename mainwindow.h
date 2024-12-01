@@ -57,6 +57,7 @@ private:
     bool fondoCambiado2;
     bool sala1;
     bool sala2;
+    bool DraculaCreado;
 
     QList<QTimer*> timers;
 
