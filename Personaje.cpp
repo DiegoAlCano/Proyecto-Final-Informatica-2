@@ -1,6 +1,6 @@
 #include "Personaje.h"
 
-Personaje::Personaje(int _SpriteX, int _SpriteY, int _spriteAncho,int _spriteAlto)
+Personaje::Personaje(unsigned short _SpriteX, unsigned short _SpriteY, unsigned short _spriteAncho, unsigned short _spriteAlto)
 {
     SpriteX = _SpriteX;
     SpriteY = _SpriteY;
@@ -9,7 +9,7 @@ Personaje::Personaje(int _SpriteX, int _SpriteY, int _spriteAncho,int _spriteAlt
 }
 
 
-void Personaje::secuenciaSprite(int direccion, int maxContador)
+void Personaje::secuenciaSprite(short direccion, unsigned short maxContador)
 {
     SpriteY = direccion;
     SpriteX = spriteAncho*contador;
