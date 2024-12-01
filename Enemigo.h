@@ -13,7 +13,7 @@ public:
     Enemigo(bool lado, int _SpriteX, int _SpriteY, int _spriteAncho, int _spriteAlto,unsigned short int _daño,short int _velocidad,short int y,short int _numSprites, const QString &rutaSprite);
     Enemigo(bool lado, int _SpriteX, int _SpriteY, int _spriteAncho, int _spriteAlto, unsigned short int _daño, short int _velocidad,short int x1,short int x2,short int y, unsigned short int _vida,short int _numSprites, const QString &rutaSprite);
     Enemigo(unsigned short int _vida,int _SpriteX, int _SpriteY, int _spriteAncho, int _spriteAlto,unsigned short int  _daño,short int _numSprites, const QString &rutaSprite);
-    Enemigo(unsigned short int _vida, int _SpriteX, int _SpriteY, int _spriteAncho, int _spriteAlto, unsigned short int _daño, short int _velocidad,short int _numSprites, const QString &rutaSprite);
+    Enemigo(const QString &rutaSprite,int time,unsigned short int _vida, int _SpriteX, int _SpriteY, int _spriteAncho, int _spriteAlto, unsigned short int _daño, short int _velocidad,short int _numSprites);
     Enemigo(short int randomX,int _SpriteX, int _SpriteY, int _spriteAncho, int _spriteAlto, unsigned short int _daño,short int _numSprites);
 
     void moverHaciaHeroe();
@@ -25,6 +25,7 @@ public:
     void disminuirVida(int cantidadVida);
 
     unsigned short int getVida();
+    int getX();
 
 
 private:
@@ -33,7 +34,7 @@ private:
 
     short int velocidad;
     unsigned short int daño;
-    unsigned short int vida;
+    short int vida;
     short int numSprites;
 
     bool Pisado = false;
