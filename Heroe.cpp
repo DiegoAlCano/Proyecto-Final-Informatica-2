@@ -84,17 +84,20 @@ void Heroe::keyPressEvent(QKeyEvent *event) {
             }
             else if(nivel=='4'){
                 if(direccionHeroe==1){
-                    Proyectil *proyectil = new Proyectil('4',10,x+90,y+42,direccionHeroe);
+                    Proyectil *proyectil = new Proyectil('4',20,x+90,y+42,direccionHeroe);
                     scene()->addItem(proyectil);
                 }
                 else{
-                    Proyectil *proyectil = new Proyectil('4',10,x-20,y+42,direccionHeroe);
+                    Proyectil *proyectil = new Proyectil('4',20,x-20,y+42,direccionHeroe);
                     scene()->addItem(proyectil);
                 }
             }
 
         }
 
+        break;
+    case Qt::Key_V:
+        emit volverMenuPrincipal();
         break;
     default:
         break;
@@ -166,8 +169,8 @@ void Heroe::actualizarSalto() {
         }
     }
     setPos(x, y);
-//    secuenciaSprite(640,8);
-//    qDebug() <<"X: "<< x<<"Y: "<< y;
+    //    secuenciaSprite(640,8);
+    //    qDebug() <<"X: "<< x<<"Y: "<< y;
 
 }
 
@@ -211,8 +214,12 @@ void Heroe::aumentarMunicion(int cantidadMunicion)
 {
     municion += cantidadMunicion;
 
-    if(municion>=15){
+    if(municion>=15 and nivel!='4'){
         municion = 15;
+    }
+
+    else if(municion>=8 and nivel=='4'){
+        municion = 8;
     }
 
 }
@@ -221,7 +228,7 @@ void Heroe::disminuirVida(int cantidadVida)
 {
     vida -= cantidadVida;
 
-    if(vida<=0){
+    if(vida<0){
         vida = 0;
     }
 
