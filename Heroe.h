@@ -27,7 +27,8 @@ public:
     unsigned short int getMunicion();
     qreal getPosX();
     void setNivel(char _Nivel);
-
+signals:
+    void volverMenuPrincipal();
 private slots:
     void actualizarSalto();
 
