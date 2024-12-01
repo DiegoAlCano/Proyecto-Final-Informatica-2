@@ -221,7 +221,11 @@ void MainWindow::iniciarNivel1()
     actualizarInfo->start(100);
     timers.append(actualizarInfo);
     //-----------------------------------------------------------------------------------------------------------------------
-
+    connect(Homero, &Heroe::volverMenuPrincipal, this, [=]() {
+        detenerTimers();
+        escenaNivel1->clear();
+        MenuPrincipal();
+    });
 }
 
 
@@ -321,6 +325,12 @@ void MainWindow::iniciarNivel2()
     });
     actualizarInfo->start(100);
     timers.append(actualizarInfo);
+    //-------------------------------------------------------------------------------------------------------------
+    connect(Bart, &Heroe::volverMenuPrincipal, this, [=]() {
+        detenerTimers();
+        escenaNivel2->clear();
+        MenuPrincipal();
+    });
 
 }
 
@@ -333,6 +343,7 @@ void MainWindow::iniciarNivel3()
 
     sala1 = false;
     sala2 = false;
+    DraculaCreado = false;
 
     QGraphicsScene *escenaNivel3 = new QGraphicsScene(this);
 
@@ -351,18 +362,21 @@ void MainWindow::iniciarNivel3()
     Homero->setFlag(QGraphicsItem::ItemIsFocusable);
     Homero->setFocus();
 
+    Enemigo *Dracula = new Enemigo(":/Recursos/Dracula.png",6000,666,0,160,150,160,30,12,10);
+    Dracula->setScale(1.25);
+
     QTimer *FlechasTimer = new QTimer(this);
     connect(FlechasTimer, &QTimer::timeout, this, [=]() {
-        Consumible *Flechas = new Consumible(":/Recursos/Flechas.png",10,15,20);
+        Consumible *Flechas = new Consumible(":/Recursos/Flechas.png",10,10,10);
 
         // Generar una posición aleatoria en el eje x (ajustando al ancho de la escena)
         int randomX = std::rand() % 540;
-        Flechas->setPos(randomX, 0);        // Comienza en la parte superior de la escena
+        Flechas->setPos(randomX, 0);
 
         // Añadir la dona a la escena
         escenaNivel3->addItem(Flechas);
     });
-    FlechasTimer->start(25000);
+    FlechasTimer->start(18000);
     timers.append(FlechasTimer);
 
     //Creacion de elementos Graficos
@@ -402,7 +416,6 @@ void MainWindow::iniciarNivel3()
     QTimer *murcielagoTimer = new QTimer(this);
     QTimer *manoTimer = new QTimer(this);
     QTimer *zombieTimer = new QTimer(this);
-    QTimer *DraculaTimer = new QTimer(this);
 
     //Se gregan los timers a la lista de timers
     timers.append(enemigoTimer);
@@ -410,13 +423,14 @@ void MainWindow::iniciarNivel3()
     timers.append(murcielagoTimer);
     timers.append(manoTimer);
     timers.append(zombieTimer);
-    timers.append(DraculaTimer);
+
     //-------------------------------------------------------------------------------------------------------------
 
     //Creacion de enemigos segun la sala y estado actual del nivel
     //-------------------------------------------------------------------------------------------------------------
     QTimer *estadoActual = new QTimer(this);
     connect(estadoActual, &QTimer::timeout, this, [=]() {
+
         if (!fondoCambiado1 && !fondoCambiado2 and !sala1) {
             if (!enemigoTimer->isActive()) { // Asegurar que solo se inicialicen una vez
                 connect(enemigoTimer, &QTimer::timeout, this, [=]() {
@@ -456,26 +470,23 @@ void MainWindow::iniciarNivel3()
                     Enemigo *mano = new Enemigo(randomX, 0, 0, 100, 200, 10, 11);
                     escenaNivel3->addItem(mano);
                 });
-                manoTimer->start(2000);
+                manoTimer->start(1500);
             }
 
         }
         if (!fondoCambiado1 && fondoCambiado2 and sala2){
 
-            if (!zombieTimer->isActive()) { // Asegurar que solo se inicialicen una vez
+            if (!zombieTimer->isActive() and !DraculaCreado) { // Asegurar que solo se inicialicen una vez
                 connect(zombieTimer, &QTimer::timeout, this, [=]() {
                     bool lado = (rand() % 2 == 0);
-                    Enemigo *zombie = new Enemigo(lado, 0, 0, 150, 160, 20, 7, 0, 550, 420, 20, 8, ":/Recursos/zombie.png");
-                    zombie->setScale(1.25);
+                    Enemigo *zombie = new Enemigo(lado, 0, 0, 150, 160, 20, 8, 0, 550, 450, 20,8, ":/Recursos/Zombie.png");
                     escenaNivel3->addItem(zombie);
                     connect(zombie, &Enemigo::enemigoEliminado, Homero, &Heroe::aumentarScore);
                 });
-                zombieTimer->start(3500);
+                zombieTimer->start(2000);
             }
             Homero->setNivel('4');
         }
-
-
     });
 
     estadoActual->start(100);
@@ -495,65 +506,53 @@ void MainWindow::iniciarNivel3()
 
         VidaText->setPlainText(QString("%1/100").arg(vidaActual));
         MunicionText->setPlainText(QString("x%1").arg(municionActual));
-        ScoreActualText->setPlainText(QString("x%1").arg(scoreActual));
 
-        if(vidaActual==0){
-            detenerTimers();
-            escenaNivel3->clear();
-            mostrarGameOver(escenaNivel3);
+        if(!DraculaCreado){
+            ScoreActualText->setPlainText(QString("x%1").arg(scoreActual));
+        }
+        else{
+            unsigned short int vidaEnemigo = Dracula->getVida();
+            ScoreActualText->setPlainText(QString("x%1").arg(vidaEnemigo));
+
+            if(vidaEnemigo==0){
+                detenerTimers();
+                escenaNivel3->clear();
+                mostrarVictoria(escenaNivel3);
+                return;
+            }
 
         }
 
-        if(scoreActual==1){
+        if(vidaActual==0){
+            if(!DraculaCreado){
+                delete Dracula;
+            }
+            detenerTimers();
+            escenaNivel3->clear();
+            mostrarGameOver(escenaNivel3);
+            return;
+        }
+
+        if(scoreActual==20){
             sala1 = true;
             rataTimer->stop();
             enemigoTimer->stop();
         }
 
-        if(scoreActual==1){
+        else if(scoreActual==30){
             sala2 = true;
             murcielagoTimer->stop();
             manoTimer->stop();
         }
-        bool inicialDracula = false;
-        if(scoreActual == 3){
+
+        else if(scoreActual == 40 and !DraculaCreado){
             zombieTimer->stop();
-            inicialDracula = true;
-
+            manoTimer->start(2000);
+            FlechasTimer->start(4750);
+            DraculaCreado = true;
+            escenaNivel3->addItem(Dracula);
+            Dracula->setPos(530,400);
         }
-        static bool DraculaCreado = false;
-        if(inicialDracula){
-            if (!DraculaTimer->isActive() && !DraculaCreado) {  // Asegurar que solo se cree una vez
-                connect(DraculaTimer, &QTimer::timeout, this, [=]() {
-                    Enemigo *Dracula = new Enemigo(300,0,130,150,160,30,2,8,":/Recursos/Dracula.png");
-                    escenaNivel3->addItem(Dracula);
-                    Dracula->setPos(550,400);
-                    Dracula->setScale(1.25);
-                    connect(Dracula, &Enemigo::enemigoEliminado, Homero, &Heroe::aumentarScore);
-
-                    // Establecer Dracula a true para evitar crear más Draculas
-                    DraculaCreado = true;
-                });
-                DraculaTimer->start(3500);
-            }
-            if (!manoTimer->isActive()) {
-                connect(manoTimer, &QTimer::timeout, this, [=]() {
-                    // Generar un número aleatorio entre -50 y 550
-                    int randomX = (std::rand() % 601) - 50; // 601 = 550 - (-50) + 1
-
-                    Enemigo *mano = new Enemigo(randomX, 0, 0, 100, 200, 10, 11);
-                    escenaNivel3->addItem(mano);
-                });
-                manoTimer->start(4500);
-            }
-
-
-
-        }
-        if(DraculaCreado){
-            DraculaTimer->stop();
-        }
-
 
         if (posicionHeroX >= 554) {
             if(!fondoCambiado1 and !fondoCambiado2 and sala1){
@@ -575,15 +574,8 @@ void MainWindow::iniciarNivel3()
         }
 
         else if (posicionHeroX <= -54) {
-            if(fondoCambiado2){
-                QImage background2(":/Recursos/Fondo2Nivel3.PNG");
-                escenaNivel3->setBackgroundBrush(QBrush(background2));
-                fondoCambiado1 = true; // Marcar que el fondo ha cambiad
-                fondoCambiado2 = false;
-                Homero->setPos(550,450);
-                Homero->modificarPosX(550);
-            }
-            else if(fondoCambiado1 and sala2){
+
+            if(fondoCambiado1 and sala2){
                 escenaNivel3->setBackgroundBrush(QBrush(background));
                 fondoCambiado1 = false; // Revertir el cambio de fondo
                 fondoCambiado2 = false;
@@ -597,6 +589,11 @@ void MainWindow::iniciarNivel3()
     posHeroe->start(100);
     timers.append(posHeroe);
     //-------------------------------------------------------------------------------------------------------------
+    connect(Homero, &Heroe::volverMenuPrincipal, this, [=]() {
+        detenerTimers();
+        escenaNivel3->clear();
+        MenuPrincipal();
+    });
 }
 
 void MainWindow::MenuPrincipal()
@@ -668,7 +665,7 @@ void MainWindow::iniciarSegundaParteNivel2(QGraphicsScene *escenaActual)
     Bart->setFocus();
 
     //Creacion Enemigos
-    Enemigo *enemigoMain = new Enemigo(300,0,130,130,130,30,27,7,":/Recursos/SpriteGremlin.png");
+    Enemigo *enemigoMain = new Enemigo(":/Recursos/SpriteGremlin.png",3800,300,0,130,130,130,30,27,7);
     escenaActual->addItem(enemigoMain);
     enemigoMain->setPos(550,460);
 
@@ -721,7 +718,7 @@ void MainWindow::iniciarSegundaParteNivel2(QGraphicsScene *escenaActual)
         MunicionText->setPlainText(QString("x%1").arg(municionActual));
         vidaEnemigoText->setPlainText(QString("%1").arg(vidaEnemigo));
         //Condicion de Derrota
-        if (vidaActual <= 0) {
+        if (vidaActual == 0) {
 
             detenerTimers();
             escenaActual->clear();
@@ -738,6 +735,12 @@ void MainWindow::iniciarSegundaParteNivel2(QGraphicsScene *escenaActual)
     });
     actualizarInfo->start(100);
     timers.append(actualizarInfo);
+
+    connect(Bart, &Heroe::volverMenuPrincipal, this, [=]() {
+        detenerTimers();
+        escenaActual->clear();
+        MenuPrincipal();
+    });
 }
 
 void MainWindow::añadirElementoGrafico(QGraphicsScene *escenaActual, int posX,int posY,int scaleX, int scaleY, const QString &rutaImagen)
