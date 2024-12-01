@@ -166,12 +166,12 @@ void Proyectil::movimientoRectilineo()
 void Proyectil::movimientoCircular()
 {
     // Parámetros físicos
-    const double velocidad = 200.5;         // Velocidad lineal (pixeles por frame)
-    const double velocidadAngular = 900.0; // Velocidad angular (grados por frame)
+    const double velocidad = 200.5;
+    const double velocidadAngular = 900.0;
 
-    // Tiempo transcurrido (simulación en cada frame)
+
     static double tiempo = 0.0; // Tiempo acumulado
-    const double deltaTiempo = 1.0 / 60.0; // Simulación con 60 FPS (1/60 s por frame)
+    const double deltaTiempo = 1.0 / 60.0;
     tiempo += deltaTiempo;
 
     // Movimiento rectilíneo uniforme (MRU)
@@ -180,7 +180,7 @@ void Proyectil::movimientoCircular()
     // Movimiento circular uniforme (MCU) para la rotación
     static double angulo = 0.0; // Ángulo inicial de rotación (grados)
     angulo += velocidadAngular * deltaTiempo; // Actualiza el ángulo
-    if (angulo >= 360.0) angulo -= 360.0; // Mantén el ángulo entre 0 y 360
+    if (angulo >= 360.0) angulo -= 360.0;
 
     // Actualización de la posición y rotación
     setPos(x, y);        // Actualiza la posición rectilínea
