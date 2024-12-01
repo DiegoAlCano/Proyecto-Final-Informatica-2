@@ -75,13 +75,15 @@ Enemigo::Enemigo(unsigned short _vida,int _SpriteX, int _SpriteY, int _spriteAnc
 
 }
 
-Enemigo::Enemigo(unsigned short _vida, int _SpriteX, int _SpriteY, int _spriteAncho, int _spriteAlto, unsigned short _daño, short _velocidad, short _numSprites, const QString &rutaSprite)
+Enemigo::Enemigo(const QString &rutaSprite,int time, unsigned short _vida, int _SpriteX, int _SpriteY, int _spriteAncho, int _spriteAlto, unsigned short _daño, short _velocidad, short _numSprites)
         :Personaje(_SpriteX,_SpriteY,_spriteAncho,_spriteAlto)
 {
     daño = _daño;
     vida = _vida;
     velocidad = _velocidad;
     numSprites = _numSprites;
+    moveTimer = nullptr;
+    colisionado = false;
 
     hojaSprites.load(rutaSprite);
     sprite = hojaSprites.copy(SpriteX,SpriteY,spriteAncho,spriteAlto);
@@ -92,7 +94,7 @@ Enemigo::Enemigo(unsigned short _vida, int _SpriteX, int _SpriteY, int _spriteAn
     connect(activadorMovimiento, &QTimer::timeout, this, [this]() {
         iniciarMovimiento();
     });
-    activadorMovimiento->start(3800);
+    activadorMovimiento->start(time);
 
 }
 
@@ -180,13 +182,12 @@ void Enemigo::moverSenoidal()
     }
 }
 
-void Enemigo::iniciarMovimiento()
-{
-    // Temporizador para el movimiento continuo
-    moveTimer = new QTimer(this);
-    connect(moveTimer, &QTimer::timeout, this, &Enemigo::moverRapido);
-    moveTimer->start(50);
-
+void Enemigo::iniciarMovimiento() {
+    if (moveTimer == nullptr) { // Solo crea un temporizador si no existe
+        moveTimer = new QTimer(this);
+        connect(moveTimer, &QTimer::timeout, this, &Enemigo::moverRapido);
+        moveTimer->start(50);
+    }
 }
 
 void Enemigo::moverRapido()
@@ -212,7 +213,7 @@ void Enemigo::moverRapido()
         setPos(x() - velocidad, y());
         secuenciaSprite(spriteAlto, numSprites);
 
-        if (x() <= -10) {
+        if (x() <= 3) {
             moviendoIzquierda = false; // Cambiar dirección al llegar a -10
             colisionado = false; // Permitir colisión en la nueva dirección
         }
@@ -222,10 +223,10 @@ void Enemigo::moverRapido()
         setPos(x() + velocidad, y());
         secuenciaSprite(0, numSprites);
 
-        if (x() >= 550) {
+        if (x() >= 530) {
             secuenciaSprite(spriteAlto, numSprites);
             moveTimer->stop();
-            delete moveTimer; // Limpiar el temporizador
+            moveTimer->deleteLater(); // Limpiar el temporizador
             moveTimer = nullptr;
             moviendoIzquierda = true; // Cambiar dirección
             colisionado = false; // Permitir colisión en la nueva dirección
@@ -311,6 +312,11 @@ void Enemigo::disminuirVida(int cantidadVida)
 unsigned short Enemigo::getVida()
 {
     return vida;
+}
+
+int Enemigo::getX()
+{
+    return x();
 }
 
 void Enemigo::saltoMuerte() {
