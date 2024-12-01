@@ -1,6 +1,6 @@
 #include "Consumible.h"
 
-Consumible::Consumible(const QString &rutaSprite, int _velocidadCaida, int _aumentoMunicion, int _aumentoVida)
+Consumible::Consumible(const QString &rutaSprite, unsigned short _velocidadCaida, unsigned short _aumentoMunicion, unsigned short _aumentoVida)
 {
     velocidadCaida = _velocidadCaida;
     aumentoMunicion = _aumentoMunicion;
@@ -13,6 +13,16 @@ Consumible::Consumible(const QString &rutaSprite, int _velocidadCaida, int _aume
     connect(fallTimer, &QTimer::timeout, this, &Consumible::caida);
     fallTimer->start(50);  // Ajusta el intervalo para la velocidad de caída
 
+}
+
+void Consumible::setAumentoVida(unsigned short _aumentoVida)
+{
+    aumentoVida = _aumentoVida;
+}
+
+void Consumible::setaumentoMunicion(unsigned short _aumentoMunicion)
+{
+    aumentoMunicion = _aumentoMunicion;
 }
 
 void Consumible::caida()
